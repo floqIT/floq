@@ -31,6 +31,7 @@
       --orange: #f97316;
       --radius: 12px;
       --radius-sm: 8px;
+      --sidebar-w: 220px;
     }
 
     html { scroll-behavior: smooth; }
@@ -77,6 +78,7 @@
     }
 
     .nav-left { display: flex; align-items: center; gap: 24px; }
+    .nav-right { display: flex; align-items: center; gap: 10px; }
 
     .back-link {
       color: var(--text-muted);
@@ -112,6 +114,29 @@
       border: 1px solid rgba(99,102,241,0.2);
     }
 
+    /* Toggle group-by-current btn in nav */
+    .nav-toggle-btn {
+      padding: 5px 12px;
+      border-radius: 99px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-family: inherit;
+    }
+    .nav-toggle-btn:hover { border-color: var(--border-hover); color: var(--text); background: var(--surface); }
+    .nav-toggle-btn.active {
+      background: rgba(99,102,241,0.15);
+      border-color: rgba(99,102,241,0.4);
+      color: #a5b4fc;
+    }
+
     /* ── MISSION CONTROL ── */
     .mission-bar {
       background: rgba(255,255,255,0.02);
@@ -119,7 +144,7 @@
       padding: 10px 24px;
       display: flex;
       align-items: center;
-      gap: 32px;
+      gap: 24px;
       flex-wrap: wrap;
     }
 
@@ -131,7 +156,7 @@
       text-transform: uppercase;
     }
 
-    .mission-stats { display: flex; gap: 24px; flex-wrap: wrap; }
+    .mission-stats { display: flex; gap: 20px; flex-wrap: wrap; align-items: center; flex: 1; }
 
     .stat {
       display: flex;
@@ -174,6 +199,278 @@
       50% { box-shadow: 0 0 0 6px rgba(239,68,68,0); }
     }
 
+    /* WIP indicator */
+    .wip-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 99px;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid transparent;
+      cursor: default;
+      position: relative;
+    }
+    .wip-indicator.ok {
+      background: rgba(99,102,241,0.1);
+      border-color: rgba(99,102,241,0.25);
+      color: #a5b4fc;
+    }
+    .wip-indicator.warn {
+      background: rgba(245,158,11,0.12);
+      border-color: rgba(245,158,11,0.3);
+      color: #fcd34d;
+    }
+    .wip-indicator.over {
+      background: rgba(239,68,68,0.12);
+      border-color: rgba(239,68,68,0.3);
+      color: #fca5a5;
+      animation: pulse-badge 2s ease-in-out infinite;
+    }
+    .wip-tooltip {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1a1a2e;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      padding: 7px 12px;
+      font-size: 12px;
+      color: var(--text-dim);
+      white-space: nowrap;
+      z-index: 200;
+      pointer-events: none;
+    }
+    .wip-indicator:hover .wip-tooltip { display: block; }
+
+    /* Mission bar right: Set Focus Window btn */
+    .mission-bar-actions { margin-left: auto; }
+    .focus-window-btn {
+      padding: 7px 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(99,102,241,0.3);
+      background: rgba(99,102,241,0.1);
+      color: #a5b4fc;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+    .focus-window-btn:hover { background: rgba(99,102,241,0.2); }
+
+    /* ── FOCUS WINDOW BANNER ── */
+    .focus-banner {
+      display: none;
+      background: linear-gradient(90deg, rgba(99,102,241,0.15) 0%, rgba(79,70,229,0.1) 100%);
+      border-bottom: 1px solid rgba(99,102,241,0.2);
+      padding: 10px 24px;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .focus-banner.visible { display: flex; }
+
+    .focus-banner-icon { font-size: 18px; }
+
+    .focus-banner-text {
+      font-size: 14px;
+      font-weight: 600;
+      color: #c7d2fe;
+      flex: 1;
+    }
+    .focus-banner-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .focus-banner-actions { display: flex; gap: 8px; }
+
+    .focus-banner-btn {
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid rgba(99,102,241,0.3);
+      background: rgba(99,102,241,0.15);
+      color: #a5b4fc;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+    .focus-banner-btn:hover { background: rgba(99,102,241,0.25); }
+    .focus-banner-btn.end {
+      border-color: rgba(239,68,68,0.25);
+      background: rgba(239,68,68,0.08);
+      color: #fca5a5;
+    }
+    .focus-banner-btn.end:hover { background: rgba(239,68,68,0.15); }
+
+    /* ── BOARD LAYOUT (sidebar + main) ── */
+    .board-layout {
+      display: flex;
+      align-items: flex-start;
+      position: relative;
+    }
+
+    /* ── CURRENTS SIDEBAR ── */
+    .currents-sidebar {
+      width: var(--sidebar-w);
+      min-height: calc(100vh - 120px);
+      background: rgba(255,255,255,0.015);
+      border-right: 1px solid var(--border);
+      padding: 16px 12px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 60px;
+      max-height: calc(100vh - 60px);
+      overflow-y: auto;
+      transition: width 0.25s ease, padding 0.25s ease;
+    }
+    .currents-sidebar.collapsed {
+      width: 48px;
+      padding: 12px 8px;
+      overflow: hidden;
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      padding: 0 4px;
+    }
+
+    .sidebar-title {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.8px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .sidebar-collapse-btn {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+    .sidebar-collapse-btn:hover { background: var(--surface); color: var(--text); }
+
+    .current-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+      margin-bottom: 3px;
+      min-width: 0;
+    }
+    .current-item:hover { background: var(--surface); border-color: var(--border); }
+    .current-item.active {
+      background: rgba(99,102,241,0.1);
+      border-color: rgba(99,102,241,0.25);
+    }
+
+    .current-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .current-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-dim);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex: 1;
+    }
+    .current-item.active .current-name { color: var(--text); }
+
+    .current-count {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 1px 6px;
+      border-radius: 99px;
+      background: var(--surface);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .sidebar-add-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 8px;
+      border-radius: 8px;
+      border: 1px dashed var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      width: 100%;
+      font-family: inherit;
+      margin-top: 8px;
+      white-space: nowrap;
+    }
+    .sidebar-add-btn:hover { border-color: var(--indigo); color: #a5b4fc; background: rgba(99,102,241,0.05); }
+
+    /* Collapsed sidebar icon strip */
+    .currents-sidebar.collapsed .sidebar-title,
+    .currents-sidebar.collapsed .current-name,
+    .currents-sidebar.collapsed .current-count,
+    .currents-sidebar.collapsed .sidebar-add-btn span,
+    .currents-sidebar.collapsed .current-item { display: none; }
+    .currents-sidebar.collapsed .sidebar-add-btn {
+      display: flex;
+      justify-content: center;
+      padding: 7px;
+      border-style: solid;
+    }
+    .currents-sidebar.collapsed .sidebar-collapse-btn { margin: 0 auto; }
+
+    /* Collapsed dot pills visible */
+    .sidebar-collapsed-dots { display: none; flex-direction: column; gap: 8px; align-items: center; margin-top: 8px; }
+    .currents-sidebar.collapsed .sidebar-collapsed-dots { display: flex; }
+    .sidebar-dot-pill {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    /* ── MAIN CONTENT ── */
+    .board-main { flex: 1; min-width: 0; }
+
     /* ── CONTAINER ── */
     .container { max-width: 860px; margin: 0 auto; padding: 24px 16px 120px; }
 
@@ -204,6 +501,17 @@
       color: #a5b4fc;
     }
 
+    /* In Focus pill styling */
+    .filter-pill.focus-pill {
+      border-color: rgba(99,102,241,0.3);
+      color: #c7d2fe;
+    }
+    .filter-pill.focus-pill.active {
+      background: rgba(99,102,241,0.2);
+      border-color: rgba(99,102,241,0.5);
+      color: #a5b4fc;
+    }
+
     /* ── SECTION HEADER ── */
     .section-header {
       display: flex;
@@ -230,6 +538,86 @@
       color: var(--text-muted);
       border: 1px solid var(--border);
     }
+
+    /* ── CURRENT GROUP HEADER ── */
+    .current-group {
+      margin-bottom: 28px;
+    }
+
+    .current-group-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      user-select: none;
+    }
+    .current-group-header:hover { background: var(--surface-hover); }
+
+    .current-group-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .current-group-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      flex: 1;
+    }
+
+    .current-group-count {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 1px 7px;
+      border-radius: 99px;
+      background: var(--surface);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+
+    .current-group-progress {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .progress-bar-wrap {
+      width: 80px;
+      height: 4px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 99px;
+      transition: width 0.4s ease;
+    }
+
+    .progress-pct {
+      font-size: 11px;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .current-group-toggle-icon {
+      font-size: 10px;
+      color: var(--text-muted);
+      transition: transform 0.2s;
+    }
+    .current-group-header.open .current-group-toggle-icon { transform: rotate(90deg); }
+
+    .current-group-cards { display: block; }
+    .current-group-cards.collapsed { display: none; }
 
     /* ── OUTCOME CARD ── */
     .outcome-card {
@@ -291,6 +679,39 @@
       background: rgba(139,92,246,0.2);
       border: 1px solid rgba(139,92,246,0.3);
       margin-left: 4px;
+    }
+
+    /* Current badge on card */
+    .current-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 99px;
+      font-size: 11px;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .current-badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* Focus indicator on card */
+    .focus-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 2px 7px;
+      border-radius: 99px;
+      font-size: 10px;
+      font-weight: 600;
+      background: rgba(99,102,241,0.12);
+      border: 1px solid rgba(99,102,241,0.25);
+      color: #c7d2fe;
+      white-space: nowrap;
     }
 
     .card-title-area { flex: 1; min-width: 0; }
@@ -422,6 +843,7 @@
       align-items: center;
       gap: 5px;
       position: relative;
+      font-family: inherit;
     }
 
     .btn:hover { background: rgba(255,255,255,0.08); color: var(--text); border-color: var(--border-hover); }
@@ -541,6 +963,7 @@
       border: none;
       box-shadow: 0 0 24px rgba(99,102,241,0.4), 0 4px 12px rgba(0,0,0,0.4);
       transition: all 0.25s;
+      font-family: inherit;
     }
     .fab:hover {
       background: var(--indigo-dark);
@@ -576,6 +999,8 @@
       transform: scale(0.95) translateY(10px);
       transition: transform 0.25s;
       box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+      max-height: 90vh;
+      overflow-y: auto;
     }
 
     .modal-backdrop.open .modal { transform: scale(1) translateY(0); }
@@ -602,6 +1027,7 @@
       justify-content: center;
       font-size: 16px;
       transition: all 0.2s;
+      font-family: inherit;
     }
     .modal-close:hover { background: var(--surface-hover); color: var(--text); }
 
@@ -650,6 +1076,126 @@
     .star-btn:hover { transform: scale(1.2); }
     .star-btn.active { color: #f59e0b; }
 
+    /* Color picker */
+    .color-picker { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    .color-swatch {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.15s;
+    }
+    .color-swatch:hover { transform: scale(1.15); }
+    .color-swatch.selected { border-color: #fff; transform: scale(1.1); }
+
+    /* Duration picker */
+    .duration-picker { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .duration-btn {
+      padding: 6px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-dim);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .duration-btn:hover { border-color: var(--border-hover); color: var(--text); background: var(--surface); }
+    .duration-btn.active {
+      background: rgba(99,102,241,0.15);
+      border-color: rgba(99,102,241,0.4);
+      color: #a5b4fc;
+    }
+
+    /* Outcome checkboxes in focus modal */
+    .outcome-checkbox-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 240px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .outcome-checkbox-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .outcome-checkbox-item:hover { border-color: var(--border-hover); background: var(--surface-hover); }
+    .outcome-checkbox-item.checked {
+      border-color: rgba(99,102,241,0.4);
+      background: rgba(99,102,241,0.08);
+    }
+
+    .outcome-checkbox-item input[type=checkbox] {
+      margin-top: 2px;
+      cursor: pointer;
+      accent-color: var(--indigo);
+      flex-shrink: 0;
+    }
+
+    .outcome-checkbox-label {
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.4;
+    }
+    .outcome-checkbox-item.checked .outcome-checkbox-label { color: var(--text); }
+
+    /* Focus tooltip */
+    .focus-tooltip-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 6px;
+      cursor: default;
+      position: relative;
+    }
+
+    .focus-question {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 1px solid var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .focus-tooltip-bubble {
+      display: none;
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      background: #1a1a2e;
+      border: 1px solid rgba(99,102,241,0.3);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 12px;
+      color: var(--text-dim);
+      line-height: 1.5;
+      max-width: 300px;
+      z-index: 500;
+      pointer-events: none;
+    }
+    .focus-tooltip-wrap:hover .focus-tooltip-bubble { display: block; }
+
     .modal-actions {
       display: flex;
       gap: 10px;
@@ -667,6 +1213,7 @@
       font-weight: 500;
       cursor: pointer;
       transition: all 0.2s;
+      font-family: inherit;
     }
     .btn-cancel:hover { background: var(--surface); color: var(--text); }
 
@@ -745,15 +1292,20 @@
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
     /* Responsive */
+    @media (max-width: 768px) {
+      .currents-sidebar { display: none; }
+      .currents-sidebar.mobile-show { display: block; position: fixed; top: 60px; left: 0; bottom: 0; z-index: 90; width: 240px; }
+    }
     @media (max-width: 600px) {
       nav { padding: 0 14px; }
       .mission-bar { padding: 10px 14px; gap: 12px; }
-      .mission-stats { gap: 16px; }
+      .mission-stats { gap: 12px; }
       .container { padding: 16px 12px 120px; }
       .fab { bottom: 20px; right: 16px; padding: 12px 18px; font-size: 13px; }
       .details-panel { width: 100%; }
       .card-bottom { gap: 10px; }
       .pipeline { display: none; }
+      .focus-window-btn span.fw-label { display: none; }
     }
 
     /* Scrollbar */
@@ -773,6 +1325,11 @@
       <div class="nav-sep"></div>
       <div class="logo">FLOQ Board</div>
       <span class="nav-badge">LIVE DEMO</span>
+    </div>
+    <div class="nav-right">
+      <button class="nav-toggle-btn" id="group-by-current-btn" title="Group outcomes by Current">
+        ⬡ Group by Current
+      </button>
     </div>
   </nav>
 
@@ -798,32 +1355,74 @@
         <span class="stat-label">In Measure</span>
         <span class="stat-value" id="stat-measure">0</span>
       </div>
+      <!-- WIP Indicator -->
+      <div id="wip-indicator" class="wip-indicator ok" title="">
+        <span id="wip-text">BUILD: 0/3</span>
+        <div class="wip-tooltip">FLOQ recommends max 3 outcomes in BUILD simultaneously</div>
+      </div>
+    </div>
+    <div class="mission-bar-actions">
+      <button class="focus-window-btn" id="set-focus-btn">
+        🎯 <span class="fw-label">Set Focus Window</span>
+      </button>
     </div>
   </div>
 
-  <!-- MAIN CONTENT -->
-  <div class="container">
+  <!-- FOCUS WINDOW BANNER -->
+  <div class="focus-banner" id="focus-banner">
+    <span class="focus-banner-icon">🎯</span>
+    <div>
+      <div class="focus-banner-text" id="focus-banner-text">Focus Window Active</div>
+      <div class="focus-banner-sub" id="focus-banner-sub"></div>
+    </div>
+    <div class="focus-banner-actions">
+      <button class="focus-banner-btn" id="edit-focus-btn">Edit Focus</button>
+      <button class="focus-banner-btn end" id="end-focus-btn">End Window</button>
+    </div>
+  </div>
 
-    <!-- FILTER BAR -->
-    <div class="filter-bar" id="filter-bar">
-      <button class="filter-pill active" data-filter="all">All</button>
-      <button class="filter-pill" data-filter="blocked">🚨 Blocked</button>
-      <button class="filter-pill" data-filter="active">🔥 Active</button>
-      <button class="filter-pill" data-filter="measure">📊 Measure Window</button>
-      <button class="filter-pill" data-filter="delivered">✅ Delivered</button>
+  <!-- BOARD LAYOUT -->
+  <div class="board-layout">
+
+    <!-- CURRENTS SIDEBAR -->
+    <div class="currents-sidebar" id="currents-sidebar">
+      <div class="sidebar-header">
+        <span class="sidebar-title">Currents</span>
+        <button class="sidebar-collapse-btn" id="sidebar-collapse-btn" title="Collapse">◀</button>
+      </div>
+      <div id="currents-list"></div>
+      <!-- Collapsed dot strip -->
+      <div class="sidebar-collapsed-dots" id="sidebar-dots"></div>
+      <button class="sidebar-add-btn" id="new-current-btn">
+        <span>+</span><span>New Current</span>
+      </button>
     </div>
 
-    <!-- OUTCOME FEED -->
-    <div id="outcome-feed"></div>
+    <!-- MAIN BOARD -->
+    <div class="board-main">
+      <div class="container">
+        <!-- FILTER BAR -->
+        <div class="filter-bar" id="filter-bar">
+          <button class="filter-pill active" data-filter="all">All</button>
+          <button class="filter-pill" data-filter="blocked">🚨 Blocked</button>
+          <button class="filter-pill" data-filter="active">🔥 Active</button>
+          <button class="filter-pill" data-filter="measure">📊 Measure Window</button>
+          <button class="filter-pill" data-filter="delivered">✅ Delivered</button>
+        </div>
 
-    <!-- DELIVERED SECTION -->
-    <div class="delivered-section" id="delivered-section" style="display:none;">
-      <div class="delivered-toggle" id="delivered-toggle">
-        <span class="toggle-icon">▶</span>
-        <span class="toggle-label">✅ Delivered</span>
-        <span class="section-count" id="delivered-count">0</span>
+        <!-- OUTCOME FEED -->
+        <div id="outcome-feed"></div>
+
+        <!-- DELIVERED SECTION -->
+        <div class="delivered-section" id="delivered-section" style="display:none;">
+          <div class="delivered-toggle" id="delivered-toggle">
+            <span class="toggle-icon">▶</span>
+            <span class="toggle-label">✅ Delivered</span>
+            <span class="section-count" id="delivered-count">0</span>
+          </div>
+          <div class="delivered-cards" id="delivered-cards"></div>
+        </div>
       </div>
-      <div class="delivered-cards" id="delivered-cards"></div>
     </div>
   </div>
 </div>
@@ -875,6 +1474,13 @@
     </div>
 
     <div class="form-group">
+      <label class="form-label">Current (Optional)</label>
+      <select class="form-select" id="form-current">
+        <option value="">— No Current —</option>
+      </select>
+    </div>
+
+    <div class="form-group">
       <label class="form-label">Assigned To</label>
       <input type="text" class="form-input" id="form-assignee" placeholder="e.g. Sarah + 🤖" />
     </div>
@@ -887,6 +1493,81 @@
     <div class="modal-actions">
       <button class="btn-cancel" id="modal-cancel">Cancel</button>
       <button class="btn-create" id="modal-create">Create Outcome</button>
+    </div>
+  </div>
+</div>
+
+<!-- NEW CURRENT MODAL -->
+<div class="modal-backdrop" id="current-modal-backdrop">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">New Current</span>
+      <button class="modal-close" id="current-modal-close">✕</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Current Name <span class="required">*</span></label>
+      <input type="text" class="form-input" id="current-name-input" placeholder="e.g. AI-Powered Features" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Color</label>
+      <div class="color-picker" id="current-color-picker">
+        <div class="color-swatch selected" data-color="#6366f1" style="background:#6366f1"></div>
+        <div class="color-swatch" data-color="#10b981" style="background:#10b981"></div>
+        <div class="color-swatch" data-color="#f59e0b" style="background:#f59e0b"></div>
+        <div class="color-swatch" data-color="#06b6d4" style="background:#06b6d4"></div>
+        <div class="color-swatch" data-color="#ef4444" style="background:#ef4444"></div>
+        <div class="color-swatch" data-color="#8b5cf6" style="background:#8b5cf6"></div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="current-modal-cancel">Cancel</button>
+      <button class="btn-create" id="current-modal-create">Create Current</button>
+    </div>
+  </div>
+</div>
+
+<!-- FOCUS WINDOW MODAL -->
+<div class="modal-backdrop" id="focus-modal-backdrop">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="focus-modal-title">Set Focus Window</span>
+      <button class="modal-close" id="focus-modal-close">✕</button>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Window Name</label>
+      <input type="text" class="form-input" id="focus-name-input" placeholder="e.g. Week of Feb 25" />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Duration</label>
+      <div class="duration-picker" id="duration-picker">
+        <button class="duration-btn" data-days="3">3 days</button>
+        <button class="duration-btn active" data-days="7">1 week</button>
+        <button class="duration-btn" data-days="14">2 weeks</button>
+        <button class="duration-btn" data-days="0">Custom</button>
+      </div>
+      <div id="custom-date-wrap" style="display:none; margin-top:10px;">
+        <input type="date" class="form-input" id="focus-end-date" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Outcomes in Focus</label>
+      <div class="outcome-checkbox-list" id="focus-outcome-list"></div>
+    </div>
+
+    <div class="focus-tooltip-wrap">
+      <span class="focus-question">?</span>
+      <span>What is a Focus Window?</span>
+      <div class="focus-tooltip-bubble">
+        A Focus Window is NOT a sprint. Outcomes outside the window can still ship. Outcomes inside don't fail — they carry over. It's just a lens, not a gate.
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" id="focus-modal-cancel">Cancel</button>
+      <button class="btn-create" id="focus-modal-create">Start Focus Window</button>
     </div>
   </div>
 </div>
@@ -917,32 +1598,52 @@ const STAGE_CONFIG = {
   PIVOT:    { emoji:'🔄', color:'#f97316', label:'PIVOT' },
 };
 
-// Sort priority (lower = higher priority in feed)
 const STAGE_PRIORITY = {
   PIVOT: 2, BUILD: 3, MEASURE: 3,
   SHIP: 3.5, SHAPE: 4, IDENTIFY: 5, IDEATE: 5,
-  DELIVER: 99, // goes to delivered section
+  DELIVER: 99,
 };
 
 const PIPELINE_STAGES = ['IDEATE','IDENTIFY','SHAPE','BUILD','SHIP','MEASURE','DELIVER'];
 
+const PRESET_COLORS = ['#6366f1','#10b981','#f59e0b','#06b6d4','#ef4444','#8b5cf6'];
+
 const SEED_DATA = [
-  { id:"1", title:"Reduce onboarding time from 15 min to 3 min", targetMetric:"Onboarding completion: 15min → 3min", impactScore:5, stage:"BUILD", assignedTo:"Sarah + 🤖", signalStatus:"ok", pivotWindowDays:14, createdAt:"2026-02-20", stageChangedAt:"2026-02-23" },
-  { id:"2", title:"Fix payment drop-off at checkout step 3", targetMetric:"Checkout conversion: 58% → 75%", impactScore:5, stage:"MEASURE", assignedTo:"James", signalStatus:"ok", pivotWindowDays:7, createdAt:"2026-02-18", stageChangedAt:"2026-02-24" },
-  { id:"3", title:"Add AI-powered job scheduling suggestions", targetMetric:"Scheduler usage: 30% → 60% of jobs", impactScore:4, stage:"SHAPE", assignedTo:"Ashok + 🤖", signalStatus:"ok", pivotWindowDays:10, createdAt:"2026-02-25", stageChangedAt:"2026-02-25" },
-  { id:"4", title:"Mobile push notifications for job updates", targetMetric:"Tech response time: 45min → 15min avg", impactScore:4, stage:"BUILD", assignedTo:"🤖 AI Pair", signalStatus:"emergency", pivotWindowDays:7, createdAt:"2026-02-22", stageChangedAt:"2026-02-24" },
-  { id:"5", title:"WhatsApp booking confirmation flow", targetMetric:"Booking confirmations: 0 → 100/day", impactScore:5, stage:"SHIP", assignedTo:"Dev Team", signalStatus:"ok", pivotWindowDays:5, createdAt:"2026-02-24", stageChangedAt:"2026-02-25" },
-  { id:"6", title:"Customer invoice auto-generation", targetMetric:"Invoice time: 20min → 0min (automated)", impactScore:3, stage:"DELIVER", assignedTo:"🤖 AI Pair", signalStatus:"ok", pivotWindowDays:7, createdAt:"2026-02-10", stageChangedAt:"2026-02-22" },
-  { id:"7", title:"Multi-technician job assignment", targetMetric:"Job efficiency score: 65 → 85", impactScore:3, stage:"PIVOT", assignedTo:"Ashok", signalStatus:"ok", pivotWindowDays:7, createdAt:"2026-02-15", stageChangedAt:"2026-02-23" },
-  { id:"8", title:"Voice-to-job-creation via phone call", targetMetric:"New job creation time: 8min → 1min", impactScore:5, stage:"IDEATE", assignedTo:"Ashok", signalStatus:"ok", pivotWindowDays:14, createdAt:"2026-02-25", stageChangedAt:"2026-02-25" },
+  { id:"1", title:"Reduce onboarding time from 15 min to 3 min", targetMetric:"Onboarding completion: 15min → 3min", impactScore:5, stage:"BUILD", assignedTo:"Sarah + 🤖", signalStatus:"ok", pivotWindowDays:14, createdAt:"2026-02-20", stageChangedAt:"2026-02-23", currentId:"c2" },
+  { id:"2", title:"Fix payment drop-off at checkout step 3", targetMetric:"Checkout conversion: 58% → 75%", impactScore:5, stage:"MEASURE", assignedTo:"James", signalStatus:"ok", pivotWindowDays:7, createdAt:"2026-02-18", stageChangedAt:"2026-02-24", currentId:"c2" },
+  { id:"3", title:"Add AI-powered job scheduling suggestions", targetMetric:"Scheduler usage: 30% → 60% of jobs", impactScore:4, stage:"SHAPE", assignedTo:"Ashok + 🤖", signalStatus:"ok", pivotWindowDays:10, createdAt:"2026-02-25", stageChangedAt:"2026-02-25", currentId:"c1" },
+  { id:"4", title:"Mobile push notifications for job updates", targetMetric:"Tech response time: 45min → 15min avg", impactScore:4, stage:"BUILD", assignedTo:"🤖 AI Pair", signalStatus:"emergency", pivotWindowDays:7, createdAt:"2026-02-22", stageChangedAt:"2026-02-24", currentId:"c3" },
+  { id:"5", title:"WhatsApp booking confirmation flow", targetMetric:"Booking confirmations: 0 → 100/day", impactScore:5, stage:"SHIP", assignedTo:"Dev Team", signalStatus:"ok", pivotWindowDays:5, createdAt:"2026-02-24", stageChangedAt:"2026-02-25", currentId:"c3" },
+  { id:"6", title:"Customer invoice auto-generation", targetMetric:"Invoice time: 20min → 0min (automated)", impactScore:3, stage:"DELIVER", assignedTo:"🤖 AI Pair", signalStatus:"ok", pivotWindowDays:7, createdAt:"2026-02-10", stageChangedAt:"2026-02-22", currentId:"c1" },
+  { id:"7", title:"Multi-technician job assignment", targetMetric:"Job efficiency score: 65 → 85", impactScore:3, stage:"PIVOT", assignedTo:"Ashok", signalStatus:"ok", pivotWindowDays:7, createdAt:"2026-02-15", stageChangedAt:"2026-02-23", currentId:"c4" },
+  { id:"8", title:"Voice-to-job-creation via phone call", targetMetric:"New job creation time: 8min → 1min", impactScore:5, stage:"IDEATE", assignedTo:"Ashok", signalStatus:"ok", pivotWindowDays:14, createdAt:"2026-02-25", stageChangedAt:"2026-02-25", currentId:"c1" },
 ];
+
+const SEED_CURRENTS = [
+  { id:"c1", name:"AI-Powered Features", color:"#6366f1" },
+  { id:"c2", name:"Customer Experience", color:"#10b981" },
+  { id:"c3", name:"Mobile Launch",       color:"#f59e0b" },
+  { id:"c4", name:"Infrastructure",      color:"#06b6d4" },
+];
+
+const SEED_FOCUS_WINDOW = {
+  active: false, name: "", startDate: null, endDate: null, outcomeIds: []
+};
 
 // ── STATE ──
 let outcomes = [];
+let currents = [];
+let focusWindow = { ...SEED_FOCUS_WINDOW };
 let currentFilter = 'all';
+let currentSidebarFilter = 'all'; // 'all' or a current id
+let groupByCurrent = false;
+let sidebarCollapsed = false;
 let selectedImpact = 3;
 let activeDropdownId = null;
 let detailsOutcomeId = null;
+let focusModalDays = 7;
+let focusSelectedOutcomes = new Set();
+let selectedCurrentColor = '#6366f1';
 
 // ── STORAGE ──
 function loadOutcomes() {
@@ -958,6 +1659,32 @@ function saveOutcomes() {
   localStorage.setItem('floq_outcomes', JSON.stringify(outcomes));
 }
 
+function loadCurrents() {
+  try {
+    const raw = localStorage.getItem('floq_currents');
+    if (raw) { currents = JSON.parse(raw); return; }
+  } catch(e) {}
+  currents = JSON.parse(JSON.stringify(SEED_CURRENTS));
+  saveCurrents();
+}
+
+function saveCurrents() {
+  localStorage.setItem('floq_currents', JSON.stringify(currents));
+}
+
+function loadFocusWindow() {
+  try {
+    const raw = localStorage.getItem('floq_focus_window');
+    if (raw) { focusWindow = JSON.parse(raw); return; }
+  } catch(e) {}
+  focusWindow = { ...SEED_FOCUS_WINDOW };
+  saveFocusWindow();
+}
+
+function saveFocusWindow() {
+  localStorage.setItem('floq_focus_window', JSON.stringify(focusWindow));
+}
+
 // ── UTILS ──
 function timeInStage(stageChangedAt) {
   const changed = new Date(stageChangedAt);
@@ -970,6 +1697,14 @@ function timeInStage(stageChangedAt) {
   const days = Math.floor(hours / 24);
   const remH = hours % 24;
   return remH > 0 ? `${days}d ${remH}h` : `${days}d`;
+}
+
+function daysUntil(dateStr) {
+  if (!dateStr) return null;
+  const end = new Date(dateStr);
+  const now = new Date();
+  const diff = Math.ceil((end - now) / 86400000);
+  return diff;
 }
 
 function avatarText(assignedTo) {
@@ -989,7 +1724,6 @@ function starsHTML(score, color) {
 
 function pipelineHTML(stage) {
   const idx = PIPELINE_STAGES.indexOf(stage);
-  const cfg = STAGE_CONFIG[stage] || {};
   let h = '<div class="pipeline">';
   PIPELINE_STAGES.forEach((s, i) => {
     let cls = 'pipe-dot';
@@ -998,6 +1732,20 @@ function pipelineHTML(stage) {
     h += `<div class="${cls}" title="${s}"></div>`;
   });
   return h + '</div>';
+}
+
+function escHtml(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function getCurrentForOutcome(o) {
+  if (!o.currentId) return null;
+  return currents.find(c => c.id === o.currentId) || null;
+}
+
+function isInFocus(o) {
+  return focusWindow.active && focusWindow.outcomeIds.includes(o.id);
 }
 
 function showToast(msg) {
@@ -1021,12 +1769,22 @@ function sortOutcomes(list) {
 }
 
 function filterOutcomes(list) {
-  if (currentFilter === 'all') return list.filter(o => o.stage !== 'DELIVER');
-  if (currentFilter === 'blocked') return list.filter(o => o.signalStatus === 'emergency');
-  if (currentFilter === 'active') return list.filter(o => ['BUILD','SHIP','SHAPE','IDENTIFY'].includes(o.stage));
-  if (currentFilter === 'measure') return list.filter(o => o.stage === 'MEASURE');
-  if (currentFilter === 'delivered') return list.filter(o => o.stage === 'DELIVER');
-  return list;
+  let result = list;
+
+  // Sidebar current filter
+  if (currentSidebarFilter !== 'all') {
+    result = result.filter(o => o.currentId === currentSidebarFilter);
+  }
+
+  // Stage/status filter
+  if (currentFilter === 'all') result = result.filter(o => o.stage !== 'DELIVER');
+  else if (currentFilter === 'blocked') result = result.filter(o => o.signalStatus === 'emergency');
+  else if (currentFilter === 'active') result = result.filter(o => ['BUILD','SHIP','SHAPE','IDENTIFY'].includes(o.stage));
+  else if (currentFilter === 'measure') result = result.filter(o => o.stage === 'MEASURE');
+  else if (currentFilter === 'delivered') result = result.filter(o => o.stage === 'DELIVER');
+  else if (currentFilter === 'infocus') result = result.filter(o => isInFocus(o));
+
+  return result;
 }
 
 function renderCard(o, extra='') {
@@ -1034,24 +1792,40 @@ function renderCard(o, extra='') {
   const isEmergency = o.signalStatus === 'emergency';
   const hasAI = (o.assignedTo||'').includes('🤖') || (o.assignedTo||'').toLowerCase().includes('ai');
   const pipelineStage = (o.stage === 'PIVOT') ? 'BUILD' : o.stage;
+  const cur = getCurrentForOutcome(o);
+  const inFocus = isInFocus(o);
 
   const stageOptions = STAGES.filter(s => s !== o.stage).map(s => {
     const sc = STAGE_CONFIG[s];
     return `<div class="stage-option" onclick="moveStage('${o.id}','${s}')">${sc.emoji} ${sc.label}</div>`;
   }).join('');
 
+  const currentBadgeHTML = cur
+    ? `<span class="current-badge" style="background:${cur.color}18;color:${cur.color};border:1px solid ${cur.color}33;">
+         <span class="current-badge-dot" style="background:${cur.color}"></span>${escHtml(cur.name)}
+       </span>`
+    : '';
+
+  const focusBadgeHTML = inFocus
+    ? `<span class="focus-indicator">🎯 In Focus</span>`
+    : '';
+
   return `
-  <div class="outcome-card ${isEmergency ? 'emergency' : ''} ${extra}" 
-       id="card-${o.id}" 
+  <div class="outcome-card ${isEmergency ? 'emergency' : ''} ${extra}"
+       id="card-${o.id}"
        data-id="${o.id}"
        style="--card-color: ${cfg.color}">
     <div class="card-top">
-      <div class="card-badges">
-        <span class="stage-badge" style="background:${cfg.color}22;color:${cfg.color};border:1px solid ${cfg.color}44">
-          ${cfg.emoji} ${cfg.label}
-        </span>
-        ${isEmergency ? '<span class="stage-badge" style="background:rgba(239,68,68,0.15);color:#fca5a5;border:1px solid rgba(239,68,68,0.3)">🚨 EMERGENCY</span>' : ''}
-        ${hasAI ? '<span class="ai-badge">🤖 AI</span>' : ''}
+      <div class="card-title-area">
+        <div class="card-badges">
+          <span class="stage-badge" style="background:${cfg.color}22;color:${cfg.color};border:1px solid ${cfg.color}44">
+            ${cfg.emoji} ${cfg.label}
+          </span>
+          ${isEmergency ? '<span class="stage-badge" style="background:rgba(239,68,68,0.15);color:#fca5a5;border:1px solid rgba(239,68,68,0.3)">🚨 EMERGENCY</span>' : ''}
+          ${hasAI ? '<span class="ai-badge">🤖 AI</span>' : ''}
+          ${currentBadgeHTML}
+          ${focusBadgeHTML}
+        </div>
       </div>
       ${starsHTML(o.impactScore || 0, cfg.color)}
     </div>
@@ -1086,13 +1860,161 @@ function renderCard(o, extra='') {
   </div>`;
 }
 
-function escHtml(s) {
-  if (!s) return '';
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+function renderGroupedByCurrent(active) {
+  // Group outcomes by currentId
+  const groups = [];
+  const noCurrentOutcomes = active.filter(o => !o.currentId);
+
+  currents.forEach(c => {
+    const members = active.filter(o => o.currentId === c.id);
+    if (members.length > 0) {
+      groups.push({ current: c, outcomes: sortOutcomes(members) });
+    }
+  });
+
+  let html = '';
+
+  groups.forEach(g => {
+    const deliverCount = g.outcomes.filter(o => o.stage === 'DELIVER').length;
+    const pct = g.outcomes.length > 0 ? Math.round((deliverCount / g.outcomes.length) * 100) : 0;
+    html += `
+    <div class="current-group">
+      <div class="current-group-header open" onclick="toggleCurrentGroup(this)">
+        <div class="current-group-dot" style="background:${g.current.color}"></div>
+        <span class="current-group-name">${escHtml(g.current.name)}</span>
+        <div class="current-group-progress">
+          <div class="progress-bar-wrap">
+            <div class="progress-bar-fill" style="width:${pct}%;background:${g.current.color}"></div>
+          </div>
+          <span class="progress-pct">${pct}% shipped</span>
+        </div>
+        <span class="current-group-count">${g.outcomes.length}</span>
+        <span class="current-group-toggle-icon">▶</span>
+      </div>
+      <div class="current-group-cards">
+        ${g.outcomes.map(o => renderCard(o)).join('')}
+      </div>
+    </div>`;
+  });
+
+  if (noCurrentOutcomes.length > 0) {
+    html += `
+    <div class="current-group">
+      <div class="current-group-header open" onclick="toggleCurrentGroup(this)">
+        <div class="current-group-dot" style="background:#64748b"></div>
+        <span class="current-group-name">No Current</span>
+        <span class="current-group-count">${noCurrentOutcomes.length}</span>
+        <span class="current-group-toggle-icon">▶</span>
+      </div>
+      <div class="current-group-cards">
+        ${sortOutcomes(noCurrentOutcomes).map(o => renderCard(o)).join('')}
+      </div>
+    </div>`;
+  }
+
+  return html;
+}
+
+function toggleCurrentGroup(header) {
+  header.classList.toggle('open');
+  const cards = header.nextElementSibling;
+  if (cards) cards.classList.toggle('collapsed');
+}
+
+function renderSidebar() {
+  const list = document.getElementById('currents-list');
+  const dots = document.getElementById('sidebar-dots');
+
+  // Count outcomes per current
+  const counts = {};
+  outcomes.forEach(o => {
+    if (o.currentId) counts[o.currentId] = (counts[o.currentId] || 0) + 1;
+  });
+
+  let html = `
+  <div class="current-item ${currentSidebarFilter === 'all' ? 'active' : ''}"
+       onclick="setSidebarFilter('all')" title="All Currents">
+    <div class="current-dot" style="background:#64748b"></div>
+    <span class="current-name">All Currents</span>
+    <span class="current-count">${outcomes.filter(o => o.stage !== 'DELIVER').length}</span>
+  </div>`;
+
+  currents.forEach(c => {
+    const cnt = counts[c.id] || 0;
+    html += `
+    <div class="current-item ${currentSidebarFilter === c.id ? 'active' : ''}"
+         onclick="setSidebarFilter('${c.id}')" title="${escHtml(c.name)}">
+      <div class="current-dot" style="background:${c.color}"></div>
+      <span class="current-name">${escHtml(c.name)}</span>
+      <span class="current-count">${cnt}</span>
+    </div>`;
+  });
+
+  list.innerHTML = html;
+
+  // Collapsed dot strip
+  let dotsHtml = `<div class="sidebar-dot-pill" onclick="setSidebarFilter('all')" title="All" style="background:#64748b"></div>`;
+  currents.forEach(c => {
+    dotsHtml += `<div class="sidebar-dot-pill" onclick="setSidebarFilter('${c.id}')" title="${escHtml(c.name)}" style="background:${c.color}"></div>`;
+  });
+  dots.innerHTML = dotsHtml;
+
+  // Populate "New Outcome" current select
+  const sel = document.getElementById('form-current');
+  if (sel) {
+    sel.innerHTML = '<option value="">— No Current —</option>';
+    currents.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.id;
+      opt.textContent = c.name;
+      sel.appendChild(opt);
+    });
+  }
+}
+
+function renderFocusBanner() {
+  const banner = document.getElementById('focus-banner');
+  const bannerText = document.getElementById('focus-banner-text');
+  const bannerSub = document.getElementById('focus-banner-sub');
+  const setFocusBtn = document.getElementById('set-focus-btn');
+
+  if (focusWindow.active) {
+    banner.classList.add('visible');
+    const inFocusCount = focusWindow.outcomeIds.length;
+    const days = daysUntil(focusWindow.endDate);
+    const dayStr = days === null ? '' : days > 0 ? ` · Ends in ${days} day${days !== 1 ? 's' : ''}` : days === 0 ? ' · Ends today' : ' · Ended';
+    bannerText.textContent = `🎯 ${focusWindow.name || 'Focus Window'} Active · ${inFocusCount} outcome${inFocusCount !== 1 ? 's' : ''} in focus${dayStr}`;
+    bannerSub.textContent = focusWindow.startDate ? `Started ${focusWindow.startDate}` : '';
+    setFocusBtn.style.display = 'none';
+
+    // Add "In Focus" filter pill if not present
+    let inFocusPill = document.querySelector('.filter-pill[data-filter="infocus"]');
+    if (!inFocusPill) {
+      inFocusPill = document.createElement('button');
+      inFocusPill.className = 'filter-pill focus-pill';
+      inFocusPill.dataset.filter = 'infocus';
+      inFocusPill.textContent = '🎯 In Focus';
+      document.getElementById('filter-bar').appendChild(inFocusPill);
+    }
+  } else {
+    banner.classList.remove('visible');
+    setFocusBtn.style.display = '';
+    // Remove "In Focus" filter pill if present
+    const inFocusPill = document.querySelector('.filter-pill[data-filter="infocus"]');
+    if (inFocusPill) {
+      if (currentFilter === 'infocus') {
+        currentFilter = 'all';
+        document.querySelector('.filter-pill[data-filter="all"]').classList.add('active');
+      }
+      inFocusPill.remove();
+    }
+  }
 }
 
 function renderBoard() {
   updateStats();
+  renderSidebar();
+  renderFocusBanner();
 
   const filtered = filterOutcomes(outcomes);
   const feed = document.getElementById('outcome-feed');
@@ -1100,7 +2022,6 @@ function renderBoard() {
   const deliveredCards = document.getElementById('delivered-cards');
   const deliveredCount = document.getElementById('delivered-count');
 
-  // Main feed (non-delivered)
   const active = sortOutcomes(filtered.filter(o => o.stage !== 'DELIVER'));
   const delivered = outcomes.filter(o => o.stage === 'DELIVER');
 
@@ -1115,13 +2036,16 @@ function renderBoard() {
     return;
   }
 
-  // Normal flow
-  if (active.length === 0 && currentFilter === 'all') {
+  if (active.length === 0 && currentFilter === 'all' && currentSidebarFilter === 'all') {
     feed.innerHTML = `<div class="empty-state"><div class="empty-icon">🚀</div><h3>Board is empty</h3><p>Click "+ New Outcome" to add your first outcome.</p></div>`;
   } else if (active.length === 0) {
     feed.innerHTML = `<div class="empty-state"><div class="empty-icon">🔍</div><h3>No outcomes match this filter</h3><p>Try a different filter or add outcomes.</p></div>`;
   } else {
-    feed.innerHTML = active.map(o => renderCard(o)).join('');
+    if (groupByCurrent && currentFilter === 'all') {
+      feed.innerHTML = renderGroupedByCurrent(active);
+    } else {
+      feed.innerHTML = active.map(o => renderCard(o)).join('');
+    }
   }
 
   // Delivered section
@@ -1139,6 +2063,7 @@ function updateStats() {
   const active = outcomes.filter(o => !['DELIVER'].includes(o.stage)).length;
   const blocked = outcomes.filter(o => o.signalStatus === 'emergency').length;
   const measure = outcomes.filter(o => o.stage === 'MEASURE').length;
+  const buildCount = outcomes.filter(o => o.stage === 'BUILD').length;
 
   document.getElementById('stat-delivered').textContent = delivered;
   document.getElementById('stat-active').textContent = active;
@@ -1147,6 +2072,22 @@ function updateStats() {
   const blockedBadge = document.getElementById('stat-blocked');
   blockedBadge.textContent = blocked;
   blockedBadge.classList.toggle('has-blocked', blocked > 0);
+
+  // WIP indicator
+  const wipEl = document.getElementById('wip-indicator');
+  const wipText = document.getElementById('wip-text');
+  const WIP_LIMIT = 3;
+  wipEl.className = 'wip-indicator';
+  if (buildCount > 5) {
+    wipEl.classList.add('over');
+    wipText.textContent = `🚨 BUILD: ${buildCount}/${WIP_LIMIT}`;
+  } else if (buildCount > WIP_LIMIT) {
+    wipEl.classList.add('warn');
+    wipText.textContent = `⚠️ BUILD: ${buildCount}/${WIP_LIMIT} — WIP exceeded`;
+  } else {
+    wipEl.classList.add('ok');
+    wipText.textContent = `BUILD: ${buildCount}/${WIP_LIMIT}`;
+  }
 }
 
 // ── ACTIONS ──
@@ -1188,11 +2129,18 @@ function closeAllDropdowns() {
   activeDropdownId = null;
 }
 
+function setSidebarFilter(id) {
+  currentSidebarFilter = id;
+  renderBoard();
+}
+
 function showDetails(id) {
   const o = outcomes.find(x => x.id === id);
   if (!o) return;
   detailsOutcomeId = id;
   const cfg = STAGE_CONFIG[o.stage] || {};
+  const cur = getCurrentForOutcome(o);
+  const inFocus = isInFocus(o);
   const content = document.getElementById('details-content');
   content.innerHTML = `
     <div style="margin-bottom:16px;">
@@ -1200,11 +2148,13 @@ function showDetails(id) {
         ${cfg.emoji} ${cfg.label}
       </span>
       ${o.signalStatus === 'emergency' ? '<span class="stage-badge" style="background:rgba(239,68,68,0.15);color:#fca5a5;border:1px solid rgba(239,68,68,0.3);display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:99px;font-size:12px;font-weight:600;margin-left:6px;">🚨 EMERGENCY</span>' : ''}
+      ${inFocus ? '<span class="focus-indicator" style="margin-left:6px;">🎯 In Focus</span>' : ''}
     </div>
     <div style="font-size:16px;font-weight:700;margin-bottom:8px;line-height:1.4;">${escHtml(o.title)}</div>
     <div style="font-size:13px;color:#64748b;margin-bottom:20px;">${escHtml(o.targetMetric || '—')}</div>
 
     <div class="details-section">
+      ${cur ? `<div class="details-row"><span class="details-key">Current</span><span class="details-val"><span style="display:inline-flex;align-items:center;gap:5px;"><span style="width:8px;height:8px;border-radius:50%;background:${cur.color};display:inline-block"></span>${escHtml(cur.name)}</span></span></div>` : ''}
       <div class="details-row"><span class="details-key">Impact Score</span><span class="details-val">${'★'.repeat(o.impactScore||0)}${'☆'.repeat(5-(o.impactScore||0))}</span></div>
       <div class="details-row"><span class="details-key">Assigned To</span><span class="details-val">${escHtml(o.assignedTo||'—')}</span></div>
       <div class="details-row"><span class="details-key">Time in Stage</span><span class="details-val">${timeInStage(o.stageChangedAt)}</span></div>
@@ -1263,6 +2213,21 @@ document.getElementById('delivered-toggle').addEventListener('click', () => {
   cards.classList.toggle('open');
 });
 
+// ── GROUP BY CURRENT TOGGLE ──
+document.getElementById('group-by-current-btn').addEventListener('click', () => {
+  groupByCurrent = !groupByCurrent;
+  document.getElementById('group-by-current-btn').classList.toggle('active', groupByCurrent);
+  renderBoard();
+});
+
+// ── SIDEBAR COLLAPSE ──
+document.getElementById('sidebar-collapse-btn').addEventListener('click', () => {
+  sidebarCollapsed = !sidebarCollapsed;
+  const sidebar = document.getElementById('currents-sidebar');
+  sidebar.classList.toggle('collapsed', sidebarCollapsed);
+  document.getElementById('sidebar-collapse-btn').textContent = sidebarCollapsed ? '▶' : '◀';
+});
+
 // ── MODAL ──
 const modalBackdrop = document.getElementById('modal-backdrop');
 
@@ -1297,6 +2262,7 @@ function resetForm() {
   document.getElementById('form-assignee').value = '';
   document.getElementById('form-pivot').value = '';
   document.getElementById('form-stage').value = 'IDEATE';
+  document.getElementById('form-current').value = '';
   setModalImpact(3);
 }
 
@@ -1308,6 +2274,7 @@ document.getElementById('modal-create').addEventListener('click', () => {
     return;
   }
   const today = new Date().toISOString().slice(0,10);
+  const currentIdVal = document.getElementById('form-current').value || null;
   const newOutcome = {
     id: Date.now().toString(),
     title,
@@ -1319,12 +2286,142 @@ document.getElementById('modal-create').addEventListener('click', () => {
     pivotWindowDays: parseInt(document.getElementById('form-pivot').value) || 14,
     createdAt: today,
     stageChangedAt: today,
+    currentId: currentIdVal,
   };
   outcomes.unshift(newOutcome);
   saveOutcomes();
   closeModal();
   renderBoard();
   showToast('✅ Outcome created!');
+});
+
+// ── NEW CURRENT MODAL ──
+const currentModalBackdrop = document.getElementById('current-modal-backdrop');
+
+document.getElementById('new-current-btn').addEventListener('click', () => {
+  document.getElementById('current-name-input').value = '';
+  selectedCurrentColor = '#6366f1';
+  document.querySelectorAll('#current-color-picker .color-swatch').forEach(s => {
+    s.classList.toggle('selected', s.dataset.color === selectedCurrentColor);
+  });
+  currentModalBackdrop.classList.add('open');
+});
+
+document.getElementById('current-modal-close').addEventListener('click', () => currentModalBackdrop.classList.remove('open'));
+document.getElementById('current-modal-cancel').addEventListener('click', () => currentModalBackdrop.classList.remove('open'));
+currentModalBackdrop.addEventListener('click', e => { if (e.target === currentModalBackdrop) currentModalBackdrop.classList.remove('open'); });
+
+document.getElementById('current-color-picker').addEventListener('click', e => {
+  const swatch = e.target.closest('.color-swatch');
+  if (!swatch) return;
+  selectedCurrentColor = swatch.dataset.color;
+  document.querySelectorAll('#current-color-picker .color-swatch').forEach(s => {
+    s.classList.toggle('selected', s === swatch);
+  });
+});
+
+document.getElementById('current-modal-create').addEventListener('click', () => {
+  const name = document.getElementById('current-name-input').value.trim();
+  if (!name) {
+    document.getElementById('current-name-input').style.borderColor = '#ef4444';
+    setTimeout(() => document.getElementById('current-name-input').style.borderColor = '', 2000);
+    return;
+  }
+  const newCurrent = {
+    id: 'c' + Date.now(),
+    name,
+    color: selectedCurrentColor,
+  };
+  currents.push(newCurrent);
+  saveCurrents();
+  currentModalBackdrop.classList.remove('open');
+  renderBoard();
+  showToast('✅ Current created!');
+});
+
+// ── FOCUS WINDOW MODAL ──
+const focusModalBackdrop = document.getElementById('focus-modal-backdrop');
+
+function openFocusModal() {
+  // Pre-fill with existing focus window data
+  document.getElementById('focus-name-input').value = focusWindow.name || '';
+  focusModalDays = 7;
+  focusSelectedOutcomes = new Set(focusWindow.outcomeIds || []);
+
+  document.querySelectorAll('.duration-btn').forEach(b => {
+    b.classList.toggle('active', parseInt(b.dataset.days) === focusModalDays);
+  });
+  document.getElementById('custom-date-wrap').style.display = 'none';
+
+  // Populate outcome checkboxes
+  const list = document.getElementById('focus-outcome-list');
+  const activeOutcomes = outcomes.filter(o => o.stage !== 'DELIVER');
+  list.innerHTML = activeOutcomes.map(o => `
+    <label class="outcome-checkbox-item ${focusSelectedOutcomes.has(o.id) ? 'checked' : ''}" for="foc-${o.id}">
+      <input type="checkbox" id="foc-${o.id}" ${focusSelectedOutcomes.has(o.id) ? 'checked' : ''}
+             onchange="toggleFocusOutcome('${o.id}', this.checked)" />
+      <span class="outcome-checkbox-label">${escHtml(o.title)}</span>
+    </label>
+  `).join('');
+
+  focusModalBackdrop.classList.add('open');
+}
+
+function toggleFocusOutcome(id, checked) {
+  if (checked) focusSelectedOutcomes.add(id);
+  else focusSelectedOutcomes.delete(id);
+  document.querySelectorAll('.outcome-checkbox-item').forEach(item => {
+    const input = item.querySelector('input[type=checkbox]');
+    if (input) item.classList.toggle('checked', input.checked);
+  });
+}
+
+document.getElementById('set-focus-btn').addEventListener('click', openFocusModal);
+document.getElementById('edit-focus-btn').addEventListener('click', openFocusModal);
+
+document.getElementById('focus-modal-close').addEventListener('click', () => focusModalBackdrop.classList.remove('open'));
+document.getElementById('focus-modal-cancel').addEventListener('click', () => focusModalBackdrop.classList.remove('open'));
+focusModalBackdrop.addEventListener('click', e => { if (e.target === focusModalBackdrop) focusModalBackdrop.classList.remove('open'); });
+
+document.getElementById('duration-picker').addEventListener('click', e => {
+  const btn = e.target.closest('.duration-btn');
+  if (!btn) return;
+  focusModalDays = parseInt(btn.dataset.days);
+  document.querySelectorAll('.duration-btn').forEach(b => b.classList.toggle('active', b === btn));
+  document.getElementById('custom-date-wrap').style.display = focusModalDays === 0 ? 'block' : 'none';
+});
+
+document.getElementById('focus-modal-create').addEventListener('click', () => {
+  const name = document.getElementById('focus-name-input').value.trim() || 'Focus Window';
+  const today = new Date();
+  const start = today.toISOString().slice(0,10);
+  let end;
+  if (focusModalDays === 0) {
+    end = document.getElementById('focus-end-date').value || null;
+  } else {
+    const endDate = new Date(today);
+    endDate.setDate(endDate.getDate() + focusModalDays);
+    end = endDate.toISOString().slice(0,10);
+  }
+  focusWindow = {
+    active: true,
+    name,
+    startDate: start,
+    endDate: end,
+    outcomeIds: Array.from(focusSelectedOutcomes),
+  };
+  saveFocusWindow();
+  focusModalBackdrop.classList.remove('open');
+  renderBoard();
+  showToast('🎯 Focus Window started!');
+});
+
+document.getElementById('end-focus-btn').addEventListener('click', () => {
+  if (!confirm('End the current Focus Window?')) return;
+  focusWindow = { ...SEED_FOCUS_WINDOW };
+  saveFocusWindow();
+  renderBoard();
+  showToast('Focus Window ended');
 });
 
 // ── DETAILS PANEL ──
@@ -1341,7 +2438,10 @@ document.addEventListener('click', e => {
 
 // ── INIT ──
 loadOutcomes();
+loadCurrents();
+loadFocusWindow();
 renderBoard();
+setModalImpact(3);
 
 // Auto-refresh time displays every 60 seconds
 setInterval(() => {

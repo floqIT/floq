@@ -745,6 +745,272 @@
       .hero-title { letter-spacing: -2px; }
     }
   </style>
+  <style>
+    /* ============================================================
+       VS EVERYTHING SECTION
+    ============================================================ */
+    .vs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-top: 2.5rem;
+    }
+    @media (max-width: 700px) { .vs-grid { grid-template-columns: 1fr; } }
+
+    .vs-card {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      transition: border-color 0.25s, box-shadow 0.25s;
+    }
+    .vs-card:hover {
+      border-color: var(--border-h);
+      box-shadow: var(--glow-h);
+    }
+    .vs-card-left {
+      background: rgba(239,68,68,0.05);
+      border-right: 1px solid var(--border);
+      padding: 1.25rem 1.25rem;
+    }
+    .vs-card-right {
+      background: rgba(99,102,241,0.06);
+      padding: 1.25rem 1.25rem;
+    }
+    .vs-card-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+    .vs-card-left .vs-card-label { color: var(--red); }
+    .vs-card-right .vs-card-label { color: var(--accent2); }
+    .vs-card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      color: var(--text);
+    }
+    .vs-card-left .vs-card-title { color: #c0a0a0; }
+    .vs-card-right .vs-card-title { color: var(--text); }
+    .vs-card-bullets {
+      list-style: none;
+      font-size: 0.8rem;
+      color: var(--text2);
+      line-height: 1.6;
+    }
+    .vs-card-bullets li { padding: 0.2rem 0; }
+    .vs-card-bullets li::before {
+      content: '· ';
+      color: var(--text3);
+    }
+    .vs-card-right .vs-card-bullets li::before { color: var(--accent2); }
+    .vs-key-diff {
+      grid-column: 1 / -1;
+      background: var(--bg3);
+      border-top: 1px solid var(--border);
+      padding: 0.85rem 1.25rem;
+      font-size: 0.825rem;
+      font-style: italic;
+      color: var(--text2);
+    }
+    .vs-key-diff strong { color: var(--accent2); font-style: normal; }
+
+    /* multi-method comparison table */
+    .vs-table-wrap {
+      margin-top: 3rem;
+      overflow-x: auto;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+    .vs-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+      min-width: 700px;
+    }
+    .vs-table th {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    .vs-table th:first-child { color: var(--text3); background: rgba(255,255,255,0.02); }
+    .vs-table th:nth-child(2),
+    .vs-table th:nth-child(3),
+    .vs-table th:nth-child(4),
+    .vs-table th:nth-child(5) { color: var(--text3); background: rgba(255,255,255,0.01); }
+    .vs-table th:last-child { color: var(--accent2); background: rgba(99,102,241,0.08); }
+    .vs-table td {
+      padding: 0.65rem 1rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      line-height: 1.5;
+      color: var(--text2);
+    }
+    .vs-table td:first-child { color: var(--text); font-weight: 600; background: rgba(255,255,255,0.015); white-space: nowrap; }
+    .vs-table td:last-child { color: var(--text); background: rgba(99,102,241,0.04); font-weight: 500; }
+    .vs-table tr:last-child td { border-bottom: none; }
+    .vs-table tr:hover td { background: rgba(99,102,241,0.03); }
+    .vs-table tr:hover td:last-child { background: rgba(99,102,241,0.07); }
+
+    /* ============================================================
+       FAQ / ACCORDION SECTION
+    ============================================================ */
+    .faq-list {
+      margin-top: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .faq-item {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      transition: border-color 0.25s;
+    }
+    .faq-item:hover { border-color: var(--border-h); }
+    .faq-item.open { border-color: rgba(99,102,241,0.3); }
+    .faq-question {
+      width: 100%;
+      background: none;
+      border: none;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-align: left;
+      padding: 1.1rem 1.25rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      transition: color 0.2s;
+    }
+    .faq-question:hover { color: var(--accent2); }
+    .faq-icon {
+      flex-shrink: 0;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      border: 1px solid var(--border-h);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+      color: var(--accent2);
+      font-weight: 400;
+      transition: transform 0.3s, background 0.3s;
+      background: rgba(99,102,241,0.08);
+    }
+    .faq-item.open .faq-icon {
+      background: rgba(99,102,241,0.2);
+      transform: rotate(45deg);
+    }
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, padding 0.3s ease;
+      padding: 0 1.25rem;
+    }
+    .faq-item.open .faq-answer {
+      max-height: 600px;
+      padding: 0 1.25rem 1.25rem;
+    }
+    .faq-answer p {
+      font-size: 0.875rem;
+      color: var(--text2);
+      line-height: 1.8;
+      border-top: 1px solid var(--border);
+      padding-top: 1rem;
+    }
+
+    /* ============================================================
+       AT SCALE SECTION
+    ============================================================ */
+    .scale-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-top: 2.5rem;
+    }
+    @media (max-width: 700px) { .scale-grid { grid-template-columns: 1fr; } }
+
+    .scale-card {
+      padding: 1.75rem;
+      border-radius: var(--radius);
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      transition: border-color 0.25s, box-shadow 0.25s;
+    }
+    .scale-card:hover {
+      border-color: var(--border-h);
+      box-shadow: var(--glow);
+    }
+    .scale-card-icon {
+      font-size: 1.6rem;
+      margin-bottom: 0.75rem;
+      display: block;
+    }
+    .scale-card h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.75rem;
+    }
+    .scale-card ul {
+      list-style: none;
+      font-size: 0.825rem;
+      color: var(--text2);
+      line-height: 1.7;
+    }
+    .scale-card ul li { padding: 0.2rem 0; }
+    .scale-card ul li::before {
+      content: '→ ';
+      color: var(--accent2);
+      font-weight: 600;
+    }
+
+    .scale-table-wrap {
+      margin-top: 3rem;
+      overflow-x: auto;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+    .scale-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.825rem;
+      min-width: 500px;
+    }
+    .scale-table th {
+      padding: 0.75rem 1.25rem;
+      text-align: left;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
+      color: var(--text3);
+      background: rgba(255,255,255,0.02);
+    }
+    .scale-table th:last-child { color: var(--accent2); background: rgba(99,102,241,0.06); }
+    .scale-table td {
+      padding: 0.85rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--text2);
+      line-height: 1.6;
+    }
+    .scale-table td:first-child { color: var(--accent2); font-weight: 700; }
+    .scale-table td:last-child { color: var(--text); }
+    .scale-table tr:last-child td { border-bottom: none; }
+    .scale-table tr:hover td { background: rgba(99,102,241,0.03); }
+  </style>
 </head>
 <body>
 
@@ -768,7 +1034,9 @@
       <li><a href="#roles">Roles</a></li>
       <li><a href="#workflow">Workflow</a></li>
       <li><a href="#terminology">Lexicon</a></li>
-      <li><a href="#compare">vs Agile</a></li>
+      <li><a href="#vs">vs All</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="#scale">At Scale</a></li>
       <li><a href="#start">Get Started</a></li>
       <li><a href="/board" style="color:var(--accent2);font-weight:600;">🚀 Try Board</a></li>
     </ul>
@@ -1731,6 +1999,542 @@
 </section>
 
 <!-- ============================================================
+     VS EVERYTHING
+============================================================ -->
+<section id="vs">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-tag">Methodology Comparison</div>
+      <h2>FLOQ vs Everything</h2>
+      <p class="section-lead">FLOQ isn't built in a vacuum. Here's how it compares to every major approach — and why it's the right choice for AI-augmented teams in 2026.</p>
+    </div>
+
+    <div class="vs-grid">
+
+      <!-- 1. vs Scrum/Agile -->
+      <div class="vs-card reveal reveal-delay-1">
+        <div class="vs-card-left">
+          <div class="vs-card-label">Scrum / Agile</div>
+          <div class="vs-card-title">Sprint-based</div>
+          <ul class="vs-card-bullets">
+            <li>2-week sprints with hard gates</li>
+            <li>5 recurring ceremonies every cycle</li>
+            <li>Story points &amp; velocity metrics</li>
+            <li>Sprint planning, standups, reviews</li>
+            <li>AI is just an autocomplete tool</li>
+          </ul>
+        </div>
+        <div class="vs-card-right">
+          <div class="vs-card-label">FLOQ wins on</div>
+          <div class="vs-card-title">Continuous flow</div>
+          <ul class="vs-card-bullets">
+            <li>No timeboxes — signal-driven cadence</li>
+            <li>80% fewer ceremonies</li>
+            <li>Impact scores over story points</li>
+            <li>Floq Rate over velocity</li>
+            <li>AI is a first-class Builder</li>
+          </ul>
+        </div>
+        <div class="vs-key-diff"><strong>Key difference:</strong> "Scrum was designed for human-only teams writing every line. FLOQ is designed for human-AI teams where code generation is instant."</div>
+      </div>
+
+      <!-- 2. vs Kanban -->
+      <div class="vs-card reveal reveal-delay-2">
+        <div class="vs-card-left">
+          <div class="vs-card-label">Kanban</div>
+          <div class="vs-card-title">Task throughput</div>
+          <ul class="vs-card-bullets">
+            <li>WIP limits, pull system</li>
+            <li>Visualize task flow</li>
+            <li>No timeboxes (similar to FLOQ)</li>
+            <li>Measures tasks completed</li>
+            <li>No outcome accountability</li>
+          </ul>
+        </div>
+        <div class="vs-card-right">
+          <div class="vs-card-label">FLOQ adds</div>
+          <div class="vs-card-title">Outcome delivery</div>
+          <ul class="vs-card-bullets">
+            <li>Outcome-based success criteria</li>
+            <li>AI Pair integration per ticket</li>
+            <li>Signal Reviews (metric-triggered)</li>
+            <li>Explicit pivot mechanism</li>
+            <li>Measures metric movement, not tasks</li>
+          </ul>
+        </div>
+        <div class="vs-key-diff"><strong>Key difference:</strong> "Kanban optimizes task flow. FLOQ optimizes outcome delivery. You can complete 100 Kanban cards and move zero metrics."</div>
+      </div>
+
+      <!-- 3. vs Shape Up -->
+      <div class="vs-card reveal reveal-delay-1">
+        <div class="vs-card-left">
+          <div class="vs-card-label">Shape Up (Basecamp)</div>
+          <div class="vs-card-title">Cycle-based</div>
+          <ul class="vs-card-bullets">
+            <li>6-week cycles (still time-bound)</li>
+            <li>Betting table &amp; pitches</li>
+            <li>Circuit breaker stops runaway work</li>
+            <li>Async-first communication</li>
+            <li>Predates AI integration era</li>
+          </ul>
+        </div>
+        <div class="vs-card-right">
+          <div class="vs-card-label">FLOQ extends</div>
+          <div class="vs-card-title">Signal-driven</div>
+          <ul class="vs-card-bullets">
+            <li>No time cycles at all</li>
+            <li>Signal-driven pivots replace cycles</li>
+            <li>Real-time metric tracking</li>
+            <li>AI Pairs &amp; continuous deployment</li>
+            <li>Sub-day delivery cycles possible</li>
+          </ul>
+        </div>
+        <div class="vs-key-diff"><strong>Key difference:</strong> "Shape Up still uses time cycles (6 weeks). FLOQ removes the time cycle entirely and replaces it with signal-driven pivots."</div>
+      </div>
+
+      <!-- 4. vs SAFe -->
+      <div class="vs-card reveal reveal-delay-2">
+        <div class="vs-card-left">
+          <div class="vs-card-label">SAFe (Scaled Agile)</div>
+          <div class="vs-card-title">Ceremony at scale</div>
+          <ul class="vs-card-bullets">
+            <li>PI Planning events (2 days)</li>
+            <li>Agile Release Trains</li>
+            <li>Program Increments</li>
+            <li>100+ defined roles</li>
+            <li>20% of time in planning ceremonies</li>
+          </ul>
+        </div>
+        <div class="vs-card-right">
+          <div class="vs-card-label">FLOQ replaces</div>
+          <div class="vs-card-title">Async coordination</div>
+          <ul class="vs-card-bullets">
+            <li>Currents align teams, no PI Planning</li>
+            <li>Async Pulses replace standups</li>
+            <li>No Agile Release Trains</li>
+            <li>Minimal roles, maximal clarity</li>
+            <li>AI-native from the ground up</li>
+          </ul>
+        </div>
+        <div class="vs-key-diff"><strong>Key difference:</strong> "SAFe scales Agile ceremonies, which scales the overhead. FLOQ scales via async Pulses and Current coordination — no trains required."</div>
+      </div>
+
+      <!-- 5. vs Lean/XP -->
+      <div class="vs-card reveal reveal-delay-1">
+        <div class="vs-card-left">
+          <div class="vs-card-label">Lean / XP</div>
+          <div class="vs-card-title">Philosophically aligned</div>
+          <ul class="vs-card-bullets">
+            <li>Lean: eliminate waste, value stream</li>
+            <li>XP: pair programming, TDD, CI</li>
+            <li>Continuous improvement focus</li>
+            <li>Strong engineering discipline</li>
+            <li>Predates AI-native development</li>
+          </ul>
+        </div>
+        <div class="vs-card-right">
+          <div class="vs-card-label">FLOQ extends</div>
+          <div class="vs-card-title">AI-native evolution</div>
+          <ul class="vs-card-bullets">
+            <li>Friction Tax = Lean's waste concept</li>
+            <li>Ship Standard extends XP's CI</li>
+            <li>AI Pairs extend XP pair programming</li>
+            <li>Outcome measurement layer added</li>
+            <li>Built for the AI-generation era</li>
+          </ul>
+        </div>
+        <div class="vs-key-diff"><strong>Key difference:</strong> "FLOQ is philosophically aligned with Lean and XP — it extends both with AI-native patterns and explicit outcome measurement."</div>
+      </div>
+
+      <!-- 6. vs No Process -->
+      <div class="vs-card reveal reveal-delay-2">
+        <div class="vs-card-left">
+          <div class="vs-card-label">No Process / "Just Ship"</div>
+          <div class="vs-card-title">Accidental chaos</div>
+          <ul class="vs-card-bullets">
+            <li>No explicit accountability</li>
+            <li>No measurable success targets</li>
+            <li>No quality gates</li>
+            <li>No learning loops</li>
+            <li>Fast until it breaks</li>
+          </ul>
+        </div>
+        <div class="vs-card-right">
+          <div class="vs-card-label">FLOQ provides</div>
+          <div class="vs-card-title">Intentional flow</div>
+          <ul class="vs-card-bullets">
+            <li>Outcome Tickets with measurable targets</li>
+            <li>Ship Standard quality gates</li>
+            <li>Signal Reviews — explicit learning</li>
+            <li>Floq Rate — honest accountability</li>
+            <li>Fast AND disciplined</li>
+          </ul>
+        </div>
+        <div class="vs-key-diff"><strong>Key difference:</strong> "FLOQ is NOT 'just ship stuff.' It has explicit accountability, explicit quality gates, and explicit learning loops. Intentional flow, not accidental chaos."</div>
+      </div>
+
+    </div><!-- /vs-grid -->
+
+    <!-- Big comparison table -->
+    <div class="vs-table-wrap reveal" style="margin-top:3.5rem;">
+      <table class="vs-table">
+        <thead>
+          <tr>
+            <th>Dimension</th>
+            <th>Scrum</th>
+            <th>Kanban</th>
+            <th>Shape Up</th>
+            <th>SAFe</th>
+            <th>✅ FLOQ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Time structure</td>
+            <td>2-week sprints</td>
+            <td>Continuous, no timeboxes</td>
+            <td>6-week cycles</td>
+            <td>Program Increments (8–12 wks)</td>
+            <td>No time structure — signal-driven</td>
+          </tr>
+          <tr>
+            <td>Work unit</td>
+            <td>User Story</td>
+            <td>Card / task</td>
+            <td>Scope / pitch</td>
+            <td>Feature / Epic / Story</td>
+            <td>Outcome Ticket</td>
+          </tr>
+          <tr>
+            <td>Success metric</td>
+            <td>Velocity (pts/sprint)</td>
+            <td>Throughput (cards/time)</td>
+            <td>Shipped scope</td>
+            <td>PI Objectives met %</td>
+            <td>Floq Rate (outcomes/period)</td>
+          </tr>
+          <tr>
+            <td>AI support</td>
+            <td>Tool / autocomplete</td>
+            <td>Tool / autocomplete</td>
+            <td>Tool / autocomplete</td>
+            <td>Tool / autocomplete</td>
+            <td>First-class Builder role</td>
+          </tr>
+          <tr>
+            <td>Ceremony load</td>
+            <td>7–11 weeks/person/year</td>
+            <td>Low (standups only)</td>
+            <td>Low (cycle kickoff)</td>
+            <td>Very high (PI Planning + ARTs)</td>
+            <td>~1–2 weeks/person/year</td>
+          </tr>
+          <tr>
+            <td>Deployment cadence</td>
+            <td>End of sprint</td>
+            <td>When ready</td>
+            <td>End of cycle</td>
+            <td>Per release train schedule</td>
+            <td>Continuous (every commit)</td>
+          </tr>
+          <tr>
+            <td>Scale mechanism</td>
+            <td>Scrum of Scrums</td>
+            <td>Kanban boards per team</td>
+            <td>Multiple cycles</td>
+            <td>Agile Release Trains</td>
+            <td>Currents + Current Board</td>
+          </tr>
+          <tr>
+            <td>Meeting overhead</td>
+            <td>High (~20% of time)</td>
+            <td>Low</td>
+            <td>Low</td>
+            <td>Very high (&gt;20% at scale)</td>
+            <td>Minimal (async Pulses)</td>
+          </tr>
+          <tr>
+            <td>Outcome tracking</td>
+            <td>None (effort-based)</td>
+            <td>None (task-based)</td>
+            <td>Shipped scope only</td>
+            <td>PI Objectives (loose)</td>
+            <td>Explicit signal thresholds</td>
+          </tr>
+          <tr>
+            <td>Best for</td>
+            <td>Human-only teams, predictable work</td>
+            <td>Support / ops teams</td>
+            <td>Small product teams, async orgs</td>
+            <td>Large enterprises already in SAFe</td>
+            <td>AI-augmented teams, 2026+</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================
+     HARD QUESTIONS (FAQ)
+============================================================ -->
+<section id="faq">
+  <div class="container-narrow">
+    <div class="reveal">
+      <div class="section-tag">For Skeptics</div>
+      <h2>Hard Questions</h2>
+      <p class="section-lead">We anticipated your pushback. Here are the questions experienced teams ask — answered directly, without marketing fluff.</p>
+    </div>
+
+    <div class="faq-list reveal reveal-delay-1">
+
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false">
+          "Without sprints, how do we know if we're on track?"
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <p>In Scrum, "on track" means "we completed our sprint commitment." That tells you nothing about business impact. In FLOQ, "on track" means "our shipped features are moving metrics toward targets." The Floq Rate and Outcome Board give you real-time visibility into actual progress — not just task completion. If metrics aren't moving, you know immediately, not at the end of a 2-week sprint.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false">
+          "How do we plan for the next quarter/year without sprints?"
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <p>Currents provide directional roadmapping. You define Currents (big objectives) for the quarter, each containing Outcome Tickets. Stakeholders see the Currents and their progress. The difference: you're committing to outcomes ("improve checkout conversion"), not to features ("build one-click checkout"). Outcome-level commitments survive changing requirements. Feature-level commitments don't.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false">
+          "How do stakeholders and executives get visibility?"
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <p>Three mechanisms replace the sprint demo: (1) <strong>Ship &amp; Show</strong> — brief async update every time something ships. (2) <strong>Current Map</strong> — always-current visual of all Currents and their Floq Rate. (3) <strong>Drop Notes</strong> — external-facing summary of what shipped this period. Stakeholders get more frequent, more meaningful updates than a bi-weekly sprint review.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false">
+          "What about team members who need structure to feel productive?"
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <p>FLOQ has structure — it just doesn't pretend arbitrary 2-week time-boxes are meaningful structure. The Outcome Board, Impact Scores, and explicit stages provide clear "what am I working on and why" context. Builders know their current Outcome Ticket, their AI Pair, and the metric they're targeting. That's more clarity than most sprint backlogs provide.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false">
+          "How do we handle work that isn't an 'outcome' — like infrastructure or on-call?"
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <p>Infrastructure work becomes Outcome Tickets too — but the outcome is technical: "Reduce API p99 latency from 800ms to 200ms." On-call and maintenance work is tracked as <strong>Drag</strong> — anything slowing Floq Rate is explicitly managed and addressed continuously, not buried in a sprint backlog as perpetual tech debt.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false">
+          "What if AI generates bad code? Who's responsible?"
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <p>The Builder. AI generates; humans review and are accountable. The Ship Standard enforces automated quality gates before anything reaches production. AI is a Builder, not an autonomous agent — it works under human oversight. The accountability model doesn't change; the labor split does.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false">
+          "How does FLOQ work for regulated industries (healthcare, finance, HIPAA, SOX)?"
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <p>The Ship Standard is configurable. For regulated industries, add compliance checks to the automated pipeline: audit trails, data classification gates, compliance scan results. Continuous deployment doesn't mean "skip compliance" — it means compliance is automated and continuous rather than a manual gate at sprint end. Automated compliance is faster AND more thorough than manual sprint-end reviews.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false">
+          "How do you onboard new team members without sprint ceremonies to learn from?"
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <p>New Builders are paired with an AI Pair immediately. They start with low Impact Score Outcome Tickets. The Outcome Board and Current Map give full context without requiring attendance at a sprint planning ceremony. Async Pulses and Ship &amp; Shows create a searchable history of what was built and why — better onboarding documentation than sprint notes.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false">
+          "What if a team just uses FLOQ as an excuse to skip planning entirely?"
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <p>FLOQ has explicit planning — it's called <strong>SHAPE</strong>. Every Outcome Ticket requires a Launchpad session defining the approach, impact score, and signal threshold. Skipping SHAPE creates unmeasurable outcomes, which violates the core principle. The Floq Lead's job is to enforce this. FLOQ without SHAPE is just "move fast and break things" — explicitly not what FLOQ prescribes.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false">
+          "Has any team actually used FLOQ?"
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <p>FLOQ is new. It's built on patterns proven by teams at the fastest-moving companies — continuous deployment (Netflix, Amazon), async-first communication (GitLab, Basecamp), outcome measurement (growth teams everywhere), and AI pair programming (emerging standard). FLOQ synthesizes these into a coherent methodology. Early adopters are building the case studies. <strong>Are you one of them?</strong></p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false">
+          "Why not just fix Agile instead of replacing it?"
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <p>Agile has been "fixed" for 23 years. SAFe, LeSS, Spotify Model, Scrum@Scale — all attempts to fix Agile at scale. The overhead hasn't reduced; it's grown. When the fundamental unit (the sprint) is no longer valid in an AI world, iteration isn't enough. FLOQ is a clean-slate rethink, not a patch.</p>
+        </div>
+      </div>
+
+    </div><!-- /faq-list -->
+  </div>
+</section>
+
+<!-- ============================================================
+     FLOQ AT SCALE
+============================================================ -->
+<section id="scale">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-tag">Enterprise &amp; Scale</div>
+      <h2>FLOQ at Scale</h2>
+      <p class="section-lead">FLOQ scales from solo founders to 500-person engineering orgs — without adopting SAFe-level ceremony. Here's how.</p>
+    </div>
+
+    <div class="scale-grid">
+
+      <div class="scale-card reveal reveal-delay-1">
+        <span class="scale-card-icon">🌊</span>
+        <h3>Cross-Team Coordination</h3>
+        <p style="font-size:0.825rem;color:var(--text2);margin-bottom:0.75rem;">Currents &amp; Current Board</p>
+        <ul>
+          <li>Multiple teams work on different Currents simultaneously</li>
+          <li>Current Lead coordinates across teams for shared Currents</li>
+          <li>Current Board shows all teams' active Currents and Floq Rates</li>
+          <li>Cross-team blockers become Floq Emergencies — escalated, not waited on</li>
+          <li>No PI Planning. No Agile Release Trains.</li>
+        </ul>
+      </div>
+
+      <div class="scale-card reveal reveal-delay-2">
+        <span class="scale-card-icon">📊</span>
+        <h3>Stakeholder Visibility</h3>
+        <p style="font-size:0.825rem;color:var(--text2);margin-bottom:0.75rem;">Real-time, not sprint-timed</p>
+        <ul>
+          <li>Current Map: always-live visual of all Currents + progress</li>
+          <li>Drop Notes: periodic external-facing summary (weekly or trigger-based)</li>
+          <li>Floq Rate Dashboard: executive view of outcome delivery velocity</li>
+          <li>Outcome Debt Report: shipped features that haven't hit targets — honest accountability</li>
+        </ul>
+      </div>
+
+      <div class="scale-card reveal reveal-delay-1">
+        <span class="scale-card-icon">⚖️</span>
+        <h3>Capacity &amp; Load Management</h3>
+        <p style="font-size:0.825rem;color:var(--text2);margin-bottom:0.75rem;">No sprint capacity planning needed</p>
+        <ul>
+          <li>WIP limits per Builder: max 2 active Outcome Tickets simultaneously</li>
+          <li>Floq Capacity metric: historical outcomes-per-period sets realistic expectations</li>
+          <li>Surge handling: Floq Burst — voluntary intensive push for critical outcomes</li>
+          <li>No capacity planning theater — actual throughput data drives decisions</li>
+        </ul>
+      </div>
+
+      <div class="scale-card reveal reveal-delay-2">
+        <span class="scale-card-icon">🤖</span>
+        <h3>AI Integration at Scale</h3>
+        <p style="font-size:0.825rem;color:var(--text2);margin-bottom:0.75rem;">AI as infrastructure, not tooling</p>
+        <ul>
+          <li>Each team has dedicated AI Pairs per Outcome Ticket</li>
+          <li>AI generates cross-team documentation automatically</li>
+          <li>Signal Analyst role uses AI to monitor metrics across all Currents</li>
+          <li>Shared AI knowledge base grows with each outcome — institutional memory</li>
+        </ul>
+      </div>
+
+      <div class="scale-card reveal reveal-delay-1">
+        <span class="scale-card-icon">🏥</span>
+        <h3>Regulated Industries</h3>
+        <p style="font-size:0.825rem;color:var(--text2);margin-bottom:0.75rem;">HIPAA · SOX · GDPR · PCI-DSS</p>
+        <ul>
+          <li>Ship Standard includes compliance gates: audit trails, data classification, regulatory scan</li>
+          <li>Every deployment logged with Outcome Ticket reference for audit purposes</li>
+          <li>Continuous compliance &gt; sprint-end compliance reviews</li>
+          <li>Automated compliance is faster AND more thorough than manual sprint-end reviews</li>
+        </ul>
+      </div>
+
+      <div class="scale-card reveal reveal-delay-2" style="grid-column: span 1;">
+        <span class="scale-card-icon">🗺️</span>
+        <h3>Team Topology in Large Orgs</h3>
+        <p style="font-size:0.825rem;color:var(--text2);margin-bottom:0.75rem;">No Agile Release Trains. Just Currents.</p>
+        <ul>
+          <li>Platform teams: own infrastructure Currents, serve via async support</li>
+          <li>Product teams: own customer-facing Currents, measured on business outcomes</li>
+          <li>Data teams: own analytics Currents, provide Signal Analyst capability org-wide</li>
+          <li>AI/ML teams: AI Pairs for all teams, continuously improving generation quality</li>
+        </ul>
+      </div>
+
+    </div><!-- /scale-grid -->
+
+    <!-- Team topology table -->
+    <div class="scale-table-wrap reveal" style="margin-top:3rem;">
+      <table class="scale-table">
+        <thead>
+          <tr>
+            <th>Team Type</th>
+            <th>Owns</th>
+            <th>Measured By</th>
+            <th>FLOQ Role</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Platform</td>
+            <td>Infrastructure Currents</td>
+            <td>API reliability, deploy speed</td>
+            <td>Serve other teams via async support; no ceremony tax</td>
+          </tr>
+          <tr>
+            <td>Product</td>
+            <td>Customer-facing Currents</td>
+            <td>Business metrics (conversion, retention)</td>
+            <td>Outcome Tickets tied directly to revenue metrics</td>
+          </tr>
+          <tr>
+            <td>Data / Analytics</td>
+            <td>Analytics Currents</td>
+            <td>Signal quality, insight delivery speed</td>
+            <td>Signal Analyst capability for all teams</td>
+          </tr>
+          <tr>
+            <td>AI / ML</td>
+            <td>AI Pair infrastructure</td>
+            <td>Code generation quality, Builder productivity</td>
+            <td>AI Pairs assigned across all active Outcome Tickets</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================
      WHY FLOQ
 ============================================================ -->
 <section id="why">
@@ -1975,6 +2779,26 @@
     });
   }, { threshold: 0.5 });
   statEls.forEach(el => statsObs.observe(el));
+
+  /* ---- FAQ accordion ---- */
+  document.querySelectorAll('.faq-question').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.faq-item');
+      const isOpen = item.classList.contains('open');
+      // close all
+      document.querySelectorAll('.faq-item.open').forEach(openItem => {
+        openItem.classList.remove('open');
+        openItem.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+        openItem.querySelector('.faq-icon').textContent = '+';
+      });
+      // open clicked (if it was closed)
+      if (!isOpen) {
+        item.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+        btn.querySelector('.faq-icon').textContent = '−';
+      }
+    });
+  });
 
 })();
 </script>
