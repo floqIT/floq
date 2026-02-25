@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FLOQ Board — Outcome Flow</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #050508;
+      --surface: rgba(255,255,255,0.03);
+      --surface-hover: rgba(255,255,255,0.06);
+      --border: rgba(255,255,255,0.07);
+      --border-hover: rgba(255,255,255,0.14);
+      --text: #e2e8f0;
+      --text-muted: #64748b;
+      --text-dim: #94a3b8;
+      --indigo: #6366f1;
+      --indigo-dark: #4f46e5;
+      --red: #ef4444;
+      --green: #10b981;
+      --amber: #f59e0b;
+      --slate: #64748b;
+      --blue: #3b82f6;
+      --violet: #8b5cf6;
+      --cyan: #06b6d4;
+      --orange: #f97316;
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Background glow ── */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -20vh;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80vw;
+      height: 60vh;
+      background: radial-gradient(ellipse, rgba(99,102,241,0.08) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Layout ── */
+    .app { position: relative; z-index: 1; }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(5,5,8,0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-left { display: flex; align-items: center; gap: 24px; }
+
+    .back-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      transition: color 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .back-link:hover { color: var(--text); }
+
+    .nav-sep { width: 1px; height: 20px; background: var(--border); }
+
+    .logo {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #a5b4fc, #6366f1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav-badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 99px;
+      background: rgba(99,102,241,0.15);
+      color: #a5b4fc;
+      border: 1px solid rgba(99,102,241,0.2);
+    }
+
+    /* ── MISSION CONTROL ── */
+    .mission-bar {
+      background: rgba(255,255,255,0.02);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 24px;
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+
+    .mission-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.8px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .mission-stats { display: flex; gap: 24px; flex-wrap: wrap; }
+
+    .stat {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .stat-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .stat-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 22px;
+      height: 22px;
+      padding: 0 6px;
+      border-radius: 99px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .stat-badge.blocked {
+      background: rgba(239,68,68,0.2);
+      color: #fca5a5;
+      border: 1px solid rgba(239,68,68,0.3);
+    }
+    .stat-badge.blocked.has-blocked { animation: pulse-badge 2s ease-in-out infinite; }
+
+    @keyframes pulse-badge {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.4); }
+      50% { box-shadow: 0 0 0 6px rgba(239,68,68,0); }
+    }
+
+    /* ── CONTAINER ── */
+    .container { max-width: 860px; margin: 0 auto; padding: 24px 16px 120px; }
+
+    /* ── FILTER BAR ── */
+    .filter-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    .filter-pill {
+      padding: 6px 14px;
+      border-radius: 99px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-dim);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .filter-pill:hover { border-color: var(--border-hover); color: var(--text); background: var(--surface); }
+    .filter-pill.active {
+      background: rgba(99,102,241,0.15);
+      border-color: rgba(99,102,241,0.4);
+      color: #a5b4fc;
+    }
+
+    /* ── SECTION HEADER ── */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      padding: 4px 0;
+    }
+
+    .section-title {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .section-count {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 1px 7px;
+      border-radius: 99px;
+      background: var(--surface);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+
+    /* ── OUTCOME CARD ── */
+    .outcome-card {
+      position: relative;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      border-left: 3px solid var(--card-color, #64748b);
+      padding: 16px 18px;
+      margin-bottom: 10px;
+      transition: all 0.25s ease;
+      cursor: default;
+    }
+
+    .outcome-card:hover {
+      background: var(--surface-hover);
+      border-color: var(--border-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    }
+
+    .outcome-card.emergency {
+      --card-color: #ef4444;
+      box-shadow: 0 0 20px rgba(239,68,68,0.2);
+      animation: emergency-pulse 3s ease-in-out infinite;
+    }
+
+    @keyframes emergency-pulse {
+      0%, 100% { box-shadow: 0 0 20px rgba(239,68,68,0.2); }
+      50% { box-shadow: 0 0 30px rgba(239,68,68,0.35); }
+    }
+
+    /* Card top row */
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .stage-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 9px;
+      border-radius: 99px;
+      font-size: 11px;
+      font-weight: 600;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .ai-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 6px;
+      border-radius: 99px;
+      font-size: 10px;
+      background: rgba(139,92,246,0.2);
+      border: 1px solid rgba(139,92,246,0.3);
+      margin-left: 4px;
+    }
+
+    .card-title-area { flex: 1; min-width: 0; }
+
+    .card-badges {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 6px;
+    }
+
+    .impact-stars {
+      display: flex;
+      gap: 2px;
+      font-size: 13px;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+
+    .star { color: #374151; }
+    .star.filled { color: #f59e0b; }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.4;
+      margin-bottom: 4px;
+    }
+
+    .card-metric {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* Card bottom row */
+    .card-bottom {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+
+    .assignee {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(99,102,241,0.25);
+      border: 1px solid rgba(99,102,241,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 600;
+      color: #a5b4fc;
+      flex-shrink: 0;
+    }
+
+    .assignee-name {
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    .time-in-stage {
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Pipeline dots */
+    .pipeline {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      margin-left: auto;
+    }
+
+    .pipe-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+      transition: all 0.3s;
+    }
+
+    .pipe-dot.active {
+      background: var(--card-color, #6366f1);
+      box-shadow: 0 0 8px var(--card-color, #6366f1);
+    }
+
+    .pipe-dot.done {
+      background: rgba(255,255,255,0.25);
+    }
+
+    /* Card actions (shown on hover) */
+    .card-actions {
+      display: flex;
+      gap: 6px;
+      margin-top: 12px;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: all 0.2s;
+    }
+
+    .outcome-card:hover .card-actions { opacity: 1; transform: translateY(0); }
+
+    .btn {
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04);
+      color: var(--text-dim);
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      position: relative;
+    }
+
+    .btn:hover { background: rgba(255,255,255,0.08); color: var(--text); border-color: var(--border-hover); }
+
+    .btn.btn-primary {
+      background: rgba(99,102,241,0.15);
+      border-color: rgba(99,102,241,0.3);
+      color: #a5b4fc;
+    }
+    .btn.btn-primary:hover { background: rgba(99,102,241,0.25); }
+
+    .btn.btn-danger {
+      background: rgba(239,68,68,0.1);
+      border-color: rgba(239,68,68,0.25);
+      color: #fca5a5;
+    }
+    .btn.btn-danger:hover { background: rgba(239,68,68,0.2); }
+
+    /* Stage dropdown */
+    .stage-dropdown {
+      position: absolute;
+      bottom: 100%;
+      left: 0;
+      margin-bottom: 6px;
+      background: #111118;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 10px;
+      padding: 6px;
+      min-width: 180px;
+      z-index: 200;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.6);
+      display: none;
+    }
+
+    .stage-dropdown.open { display: block; }
+
+    .stage-option {
+      padding: 7px 10px;
+      border-radius: 6px;
+      font-size: 13px;
+      cursor: pointer;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.15s;
+    }
+
+    .stage-option:hover { background: var(--surface-hover); color: var(--text); }
+    .stage-option.current { color: var(--text-muted); cursor: default; font-size: 12px; }
+    .stage-option.current:hover { background: transparent; }
+
+    /* ── DELIVERED SECTION ── */
+    .delivered-section { margin-top: 24px; }
+
+    .delivered-toggle {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      cursor: pointer;
+      margin-bottom: 10px;
+      transition: all 0.2s;
+    }
+    .delivered-toggle:hover { background: var(--surface-hover); }
+
+    .delivered-toggle .toggle-icon {
+      font-size: 12px;
+      color: var(--text-muted);
+      transition: transform 0.2s;
+    }
+    .delivered-toggle.open .toggle-icon { transform: rotate(90deg); }
+
+    .delivered-toggle .toggle-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-dim);
+    }
+
+    .delivered-cards { display: none; }
+    .delivered-cards.open { display: block; }
+
+    .outcome-card.delivered-card {
+      opacity: 0.6;
+    }
+    .outcome-card.delivered-card:hover { opacity: 0.9; }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+    }
+    .empty-state .empty-icon { font-size: 48px; margin-bottom: 16px; }
+    .empty-state h3 { font-size: 18px; font-weight: 600; margin-bottom: 8px; color: var(--text-dim); }
+    .empty-state p { font-size: 14px; }
+
+    /* ── FAB ── */
+    .fab {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 22px;
+      border-radius: 99px;
+      background: var(--indigo);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 0 24px rgba(99,102,241,0.4), 0 4px 12px rgba(0,0,0,0.4);
+      transition: all 0.25s;
+    }
+    .fab:hover {
+      background: var(--indigo-dark);
+      box-shadow: 0 0 36px rgba(99,102,241,0.6), 0 8px 24px rgba(0,0,0,0.4);
+      transform: translateY(-2px);
+    }
+
+    /* ── MODAL ── */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(8px);
+      z-index: 300;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s;
+    }
+
+    .modal-backdrop.open { opacity: 1; pointer-events: all; }
+
+    .modal {
+      background: #0d0d16;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 28px;
+      width: 100%;
+      max-width: 480px;
+      transform: scale(0.95) translateY(10px);
+      transition: transform 0.25s;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+    }
+
+    .modal-backdrop.open .modal { transform: scale(1) translateY(0); }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 22px;
+    }
+
+    .modal-title { font-size: 18px; font-weight: 700; }
+
+    .modal-close {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      transition: all 0.2s;
+    }
+    .modal-close:hover { background: var(--surface-hover); color: var(--text); }
+
+    /* Form */
+    .form-group { margin-bottom: 16px; }
+
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-dim);
+      margin-bottom: 6px;
+      letter-spacing: 0.3px;
+    }
+
+    .form-label .required { color: var(--red); margin-left: 2px; }
+
+    .form-input, .form-select {
+      width: 100%;
+      padding: 10px 14px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-input::placeholder { color: var(--text-muted); }
+    .form-input:focus, .form-select:focus { border-color: rgba(99,102,241,0.5); }
+    .form-select option { background: #111118; }
+
+    /* Star selector */
+    .star-selector { display: flex; gap: 6px; }
+
+    .star-btn {
+      font-size: 22px;
+      cursor: pointer;
+      transition: transform 0.1s;
+      color: #374151;
+      background: none;
+      border: none;
+      padding: 0;
+    }
+    .star-btn:hover { transform: scale(1.2); }
+    .star-btn.active { color: #f59e0b; }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 24px;
+    }
+
+    .btn-cancel {
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-dim);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-cancel:hover { background: var(--surface); color: var(--text); }
+
+    .btn-create {
+      padding: 10px 22px;
+      border-radius: 8px;
+      border: none;
+      background: var(--indigo);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .btn-create:hover { background: var(--indigo-dark); }
+
+    /* Details panel */
+    .details-panel {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 380px;
+      background: #0a0a12;
+      border-left: 1px solid rgba(255,255,255,0.08);
+      z-index: 250;
+      overflow-y: auto;
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+      padding: 24px;
+    }
+
+    .details-panel.open { transform: translateX(0); }
+
+    .details-close {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .details-title { font-size: 16px; font-weight: 700; }
+
+    .details-section { margin-bottom: 20px; }
+
+    .details-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .details-key { font-size: 12px; color: var(--text-muted); }
+    .details-val { font-size: 13px; font-weight: 500; color: var(--text); }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #1a1a2e;
+      border: 1px solid rgba(99,102,241,0.3);
+      border-radius: 8px;
+      padding: 10px 18px;
+      font-size: 13px;
+      color: var(--text);
+      opacity: 0;
+      transition: all 0.3s;
+      pointer-events: none;
+      z-index: 400;
+      white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      nav { padding: 0 14px; }
+      .mission-bar { padding: 10px 14px; gap: 12px; }
+      .mission-stats { gap: 16px; }
+      .container { padding: 16px 12px 120px; }
+      .fab { bottom: 20px; right: 16px; padding: 12px 18px; font-size: 13px; }
+      .details-panel { width: 100%; }
+      .card-bottom { gap: 10px; }
+      .pipeline { display: none; }
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-left">
+      <a href="/" class="back-link">← floqit.com</a>
+      <div class="nav-sep"></div>
+      <div class="logo">FLOQ Board</div>
+      <span class="nav-badge">LIVE DEMO</span>
+    </div>
+  </nav>
+
+  <!-- MISSION CONTROL -->
+  <div class="mission-bar">
+    <span class="mission-label">Mission Control</span>
+    <div class="mission-stats">
+      <div class="stat">
+        <span class="stat-label">Floq Rate</span>
+        <span class="stat-value" id="stat-delivered">0</span>
+        <span class="stat-label">delivered</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Active</span>
+        <span class="stat-value" id="stat-active">0</span>
+        <span class="stat-label">in flight</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Blocked</span>
+        <span class="stat-badge blocked" id="stat-blocked">0</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">In Measure</span>
+        <span class="stat-value" id="stat-measure">0</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="container">
+
+    <!-- FILTER BAR -->
+    <div class="filter-bar" id="filter-bar">
+      <button class="filter-pill active" data-filter="all">All</button>
+      <button class="filter-pill" data-filter="blocked">🚨 Blocked</button>
+      <button class="filter-pill" data-filter="active">🔥 Active</button>
+      <button class="filter-pill" data-filter="measure">📊 Measure Window</button>
+      <button class="filter-pill" data-filter="delivered">✅ Delivered</button>
+    </div>
+
+    <!-- OUTCOME FEED -->
+    <div id="outcome-feed"></div>
+
+    <!-- DELIVERED SECTION -->
+    <div class="delivered-section" id="delivered-section" style="display:none;">
+      <div class="delivered-toggle" id="delivered-toggle">
+        <span class="toggle-icon">▶</span>
+        <span class="toggle-label">✅ Delivered</span>
+        <span class="section-count" id="delivered-count">0</span>
+      </div>
+      <div class="delivered-cards" id="delivered-cards"></div>
+    </div>
+  </div>
+</div>
+
+<!-- FAB -->
+<button class="fab" id="fab-btn">
+  <span>+</span> New Outcome
+</button>
+
+<!-- ADD OUTCOME MODAL -->
+<div class="modal-backdrop" id="modal-backdrop">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">New Outcome</span>
+      <button class="modal-close" id="modal-close">✕</button>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Outcome Title <span class="required">*</span></label>
+      <input type="text" class="form-input" id="form-title" placeholder="e.g. Reduce onboarding time from 15 min to 3 min" />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Target Metric</label>
+      <input type="text" class="form-input" id="form-metric" placeholder="e.g. Increase X from Y to Z" />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Impact Score</label>
+      <div class="star-selector" id="star-selector">
+        <button class="star-btn" data-val="1">★</button>
+        <button class="star-btn" data-val="2">★</button>
+        <button class="star-btn" data-val="3">★</button>
+        <button class="star-btn" data-val="4">★</button>
+        <button class="star-btn" data-val="5">★</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Starting Stage</label>
+      <select class="form-select" id="form-stage">
+        <option value="IDEATE">💡 IDEATE</option>
+        <option value="IDENTIFY">🎯 IDENTIFY</option>
+        <option value="SHAPE">✏️ SHAPE</option>
+        <option value="BUILD">🔨 BUILD</option>
+        <option value="SHIP">🚢 SHIP</option>
+        <option value="MEASURE">📊 MEASURE</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Assigned To</label>
+      <input type="text" class="form-input" id="form-assignee" placeholder="e.g. Sarah + 🤖" />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Pivot Window (days)</label>
+      <input type="number" class="form-input" id="form-pivot" placeholder="14" min="1" max="90" />
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" id="modal-cancel">Cancel</button>
+      <button class="btn-create" id="modal-create">Create Outcome</button>
+    </div>
+  </div>
+</div>
+
+<!-- DETAILS PANEL -->
+<div class="details-panel" id="details-panel">
+  <div class="details-close">
+    <span class="details-title">Outcome Details</span>
+    <button class="modal-close" id="details-close-btn">✕</button>
+  </div>
+  <div id="details-content"></div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── CONFIG ──
+const STAGES = ['IDEATE','IDENTIFY','SHAPE','BUILD','SHIP','MEASURE','DELIVER','PIVOT'];
+const STAGE_CONFIG = {
+  IDEATE:   { emoji:'💡', color:'#64748b', label:'IDEATE' },
+  IDENTIFY: { emoji:'🎯', color:'#3b82f6', label:'IDENTIFY' },
+  SHAPE:    { emoji:'✏️', color:'#6366f1', label:'SHAPE' },
+  BUILD:    { emoji:'🔨', color:'#8b5cf6', label:'BUILD' },
+  SHIP:     { emoji:'🚢', color:'#06b6d4', label:'SHIP' },
+  MEASURE:  { emoji:'📊', color:'#f59e0b', label:'MEASURE' },
+  DELIVER:  { emoji:'✅', color:'#10b981', label:'DELIVER' },
+  PIVOT:    { emoji:'🔄', color:'#f97316', label:'PIVOT' },
+};
+
+// Sort priority (lower = higher priority in feed)
+const STAGE_PRIORITY = {
+  PIVOT: 2, BUILD: 3, MEASURE: 3,
+  SHIP: 3.5, SHAPE: 4, IDENTIFY: 5, IDEATE: 5,
+  DELIVER: 99, // goes to delivered section
+};
+
+const PIPELINE_STAGES = ['IDEATE','IDENTIFY','SHAPE','BUILD','SHIP','MEASURE','DELIVER'];
+
+const SEED_DATA = [
+  { id:"1", title:"Reduce onboarding time from 15 min to 3 min", targetMetric:"Onboarding completion: 15min → 3min", impactScore:5, stage:"BUILD", assignedTo:"Sarah + 🤖", signalStatus:"ok", pivotWindowDays:14, createdAt:"2026-02-20", stageChangedAt:"2026-02-23" },
+  { id:"2", title:"Fix payment drop-off at checkout step 3", targetMetric:"Checkout conversion: 58% → 75%", impactScore:5, stage:"MEASURE", assignedTo:"James", signalStatus:"ok", pivotWindowDays:7, createdAt:"2026-02-18", stageChangedAt:"2026-02-24" },
+  { id:"3", title:"Add AI-powered job scheduling suggestions", targetMetric:"Scheduler usage: 30% → 60% of jobs", impactScore:4, stage:"SHAPE", assignedTo:"Ashok + 🤖", signalStatus:"ok", pivotWindowDays:10, createdAt:"2026-02-25", stageChangedAt:"2026-02-25" },
+  { id:"4", title:"Mobile push notifications for job updates", targetMetric:"Tech response time: 45min → 15min avg", impactScore:4, stage:"BUILD", assignedTo:"🤖 AI Pair", signalStatus:"emergency", pivotWindowDays:7, createdAt:"2026-02-22", stageChangedAt:"2026-02-24" },
+  { id:"5", title:"WhatsApp booking confirmation flow", targetMetric:"Booking confirmations: 0 → 100/day", impactScore:5, stage:"SHIP", assignedTo:"Dev Team", signalStatus:"ok", pivotWindowDays:5, createdAt:"2026-02-24", stageChangedAt:"2026-02-25" },
+  { id:"6", title:"Customer invoice auto-generation", targetMetric:"Invoice time: 20min → 0min (automated)", impactScore:3, stage:"DELIVER", assignedTo:"🤖 AI Pair", signalStatus:"ok", pivotWindowDays:7, createdAt:"2026-02-10", stageChangedAt:"2026-02-22" },
+  { id:"7", title:"Multi-technician job assignment", targetMetric:"Job efficiency score: 65 → 85", impactScore:3, stage:"PIVOT", assignedTo:"Ashok", signalStatus:"ok", pivotWindowDays:7, createdAt:"2026-02-15", stageChangedAt:"2026-02-23" },
+  { id:"8", title:"Voice-to-job-creation via phone call", targetMetric:"New job creation time: 8min → 1min", impactScore:5, stage:"IDEATE", assignedTo:"Ashok", signalStatus:"ok", pivotWindowDays:14, createdAt:"2026-02-25", stageChangedAt:"2026-02-25" },
+];
+
+// ── STATE ──
+let outcomes = [];
+let currentFilter = 'all';
+let selectedImpact = 3;
+let activeDropdownId = null;
+let detailsOutcomeId = null;
+
+// ── STORAGE ──
+function loadOutcomes() {
+  try {
+    const raw = localStorage.getItem('floq_outcomes');
+    if (raw) { outcomes = JSON.parse(raw); return; }
+  } catch(e) {}
+  outcomes = JSON.parse(JSON.stringify(SEED_DATA));
+  saveOutcomes();
+}
+
+function saveOutcomes() {
+  localStorage.setItem('floq_outcomes', JSON.stringify(outcomes));
+}
+
+// ── UTILS ──
+function timeInStage(stageChangedAt) {
+  const changed = new Date(stageChangedAt);
+  const now = new Date();
+  const diffMs = now - changed;
+  if (isNaN(diffMs)) return '—';
+  const hours = Math.floor(diffMs / 3600000);
+  if (hours < 1) return 'just now';
+  if (hours < 24) return `${hours}h`;
+  const days = Math.floor(hours / 24);
+  const remH = hours % 24;
+  return remH > 0 ? `${days}d ${remH}h` : `${days}d`;
+}
+
+function avatarText(assignedTo) {
+  if (!assignedTo) return '?';
+  const s = assignedTo.trim();
+  if (s.includes('🤖')) return '🤖';
+  return s.charAt(0).toUpperCase();
+}
+
+function starsHTML(score, color) {
+  let h = '<div class="impact-stars">';
+  for (let i = 1; i <= 5; i++) {
+    h += `<span class="star${i <= score ? ' filled' : ''}" style="${i<=score?'color:#f59e0b':''}" title="Impact ${i}">★</span>`;
+  }
+  return h + '</div>';
+}
+
+function pipelineHTML(stage) {
+  const idx = PIPELINE_STAGES.indexOf(stage);
+  const cfg = STAGE_CONFIG[stage] || {};
+  let h = '<div class="pipeline">';
+  PIPELINE_STAGES.forEach((s, i) => {
+    let cls = 'pipe-dot';
+    if (i === idx) cls += ' active';
+    else if (i < idx) cls += ' done';
+    h += `<div class="${cls}" title="${s}"></div>`;
+  });
+  return h + '</div>';
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ── RENDER ──
+function sortOutcomes(list) {
+  return [...list].sort((a, b) => {
+    const aEmergency = a.signalStatus === 'emergency' ? 0 : 1;
+    const bEmergency = b.signalStatus === 'emergency' ? 0 : 1;
+    if (aEmergency !== bEmergency) return aEmergency - bEmergency;
+    const ap = STAGE_PRIORITY[a.stage] ?? 10;
+    const bp = STAGE_PRIORITY[b.stage] ?? 10;
+    if (ap !== bp) return ap - bp;
+    return (b.impactScore || 0) - (a.impactScore || 0);
+  });
+}
+
+function filterOutcomes(list) {
+  if (currentFilter === 'all') return list.filter(o => o.stage !== 'DELIVER');
+  if (currentFilter === 'blocked') return list.filter(o => o.signalStatus === 'emergency');
+  if (currentFilter === 'active') return list.filter(o => ['BUILD','SHIP','SHAPE','IDENTIFY'].includes(o.stage));
+  if (currentFilter === 'measure') return list.filter(o => o.stage === 'MEASURE');
+  if (currentFilter === 'delivered') return list.filter(o => o.stage === 'DELIVER');
+  return list;
+}
+
+function renderCard(o, extra='') {
+  const cfg = STAGE_CONFIG[o.stage] || { emoji:'❓', color:'#64748b', label:o.stage };
+  const isEmergency = o.signalStatus === 'emergency';
+  const hasAI = (o.assignedTo||'').includes('🤖') || (o.assignedTo||'').toLowerCase().includes('ai');
+  const pipelineStage = (o.stage === 'PIVOT') ? 'BUILD' : o.stage;
+
+  const stageOptions = STAGES.filter(s => s !== o.stage).map(s => {
+    const sc = STAGE_CONFIG[s];
+    return `<div class="stage-option" onclick="moveStage('${o.id}','${s}')">${sc.emoji} ${sc.label}</div>`;
+  }).join('');
+
+  return `
+  <div class="outcome-card ${isEmergency ? 'emergency' : ''} ${extra}" 
+       id="card-${o.id}" 
+       data-id="${o.id}"
+       style="--card-color: ${cfg.color}">
+    <div class="card-top">
+      <div class="card-badges">
+        <span class="stage-badge" style="background:${cfg.color}22;color:${cfg.color};border:1px solid ${cfg.color}44">
+          ${cfg.emoji} ${cfg.label}
+        </span>
+        ${isEmergency ? '<span class="stage-badge" style="background:rgba(239,68,68,0.15);color:#fca5a5;border:1px solid rgba(239,68,68,0.3)">🚨 EMERGENCY</span>' : ''}
+        ${hasAI ? '<span class="ai-badge">🤖 AI</span>' : ''}
+      </div>
+      ${starsHTML(o.impactScore || 0, cfg.color)}
+    </div>
+
+    <div class="card-title">${escHtml(o.title)}</div>
+    ${o.targetMetric ? `<div class="card-metric">📍 ${escHtml(o.targetMetric)}</div>` : ''}
+
+    <div class="card-bottom">
+      <div class="assignee">
+        <div class="avatar">${avatarText(o.assignedTo)}</div>
+        <span class="assignee-name">${escHtml(o.assignedTo || 'Unassigned')}</span>
+      </div>
+      <div class="time-in-stage">⏱ ${timeInStage(o.stageChangedAt)}</div>
+      ${pipelineHTML(pipelineStage)}
+    </div>
+
+    <div class="card-actions">
+      <div style="position:relative">
+        <button class="btn btn-primary" onclick="toggleDropdown('${o.id}', event)">
+          Move Stage ▶
+        </button>
+        <div class="stage-dropdown" id="dropdown-${o.id}">
+          <div class="stage-option current">Currently: ${cfg.emoji} ${cfg.label}</div>
+          ${stageOptions}
+        </div>
+      </div>
+      <button class="btn ${isEmergency ? 'btn-danger' : ''}" onclick="toggleEmergency('${o.id}')">
+        ${isEmergency ? '✅ Clear Emergency' : '🚨 Mark Emergency'}
+      </button>
+      <button class="btn" onclick="showDetails('${o.id}')">Details →</button>
+    </div>
+  </div>`;
+}
+
+function escHtml(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function renderBoard() {
+  updateStats();
+
+  const filtered = filterOutcomes(outcomes);
+  const feed = document.getElementById('outcome-feed');
+  const deliveredSection = document.getElementById('delivered-section');
+  const deliveredCards = document.getElementById('delivered-cards');
+  const deliveredCount = document.getElementById('delivered-count');
+
+  // Main feed (non-delivered)
+  const active = sortOutcomes(filtered.filter(o => o.stage !== 'DELIVER'));
+  const delivered = outcomes.filter(o => o.stage === 'DELIVER');
+
+  if (currentFilter === 'delivered') {
+    feed.innerHTML = '';
+    if (delivered.length === 0) {
+      feed.innerHTML = `<div class="empty-state"><div class="empty-icon">🎯</div><h3>No delivered outcomes yet</h3><p>Outcomes you deliver will show up here.</p></div>`;
+    } else {
+      delivered.forEach(o => feed.insertAdjacentHTML('beforeend', renderCard(o)));
+    }
+    deliveredSection.style.display = 'none';
+    return;
+  }
+
+  // Normal flow
+  if (active.length === 0 && currentFilter === 'all') {
+    feed.innerHTML = `<div class="empty-state"><div class="empty-icon">🚀</div><h3>Board is empty</h3><p>Click "+ New Outcome" to add your first outcome.</p></div>`;
+  } else if (active.length === 0) {
+    feed.innerHTML = `<div class="empty-state"><div class="empty-icon">🔍</div><h3>No outcomes match this filter</h3><p>Try a different filter or add outcomes.</p></div>`;
+  } else {
+    feed.innerHTML = active.map(o => renderCard(o)).join('');
+  }
+
+  // Delivered section
+  if (currentFilter === 'all' && delivered.length > 0) {
+    deliveredSection.style.display = 'block';
+    deliveredCount.textContent = delivered.length;
+    deliveredCards.innerHTML = delivered.map(o => renderCard(o, 'delivered-card')).join('');
+  } else {
+    deliveredSection.style.display = 'none';
+  }
+}
+
+function updateStats() {
+  const delivered = outcomes.filter(o => o.stage === 'DELIVER').length;
+  const active = outcomes.filter(o => !['DELIVER'].includes(o.stage)).length;
+  const blocked = outcomes.filter(o => o.signalStatus === 'emergency').length;
+  const measure = outcomes.filter(o => o.stage === 'MEASURE').length;
+
+  document.getElementById('stat-delivered').textContent = delivered;
+  document.getElementById('stat-active').textContent = active;
+  document.getElementById('stat-measure').textContent = measure;
+
+  const blockedBadge = document.getElementById('stat-blocked');
+  blockedBadge.textContent = blocked;
+  blockedBadge.classList.toggle('has-blocked', blocked > 0);
+}
+
+// ── ACTIONS ──
+function moveStage(id, stage) {
+  const o = outcomes.find(x => x.id === id);
+  if (!o) return;
+  o.stage = stage;
+  o.stageChangedAt = new Date().toISOString().slice(0,10);
+  if (stage !== 'DELIVER' && stage !== 'PIVOT') o.signalStatus = 'ok';
+  saveOutcomes();
+  closeAllDropdowns();
+  renderBoard();
+  showToast(`Moved to ${STAGE_CONFIG[stage]?.emoji} ${stage}`);
+}
+
+function toggleEmergency(id) {
+  const o = outcomes.find(x => x.id === id);
+  if (!o) return;
+  o.signalStatus = o.signalStatus === 'emergency' ? 'ok' : 'emergency';
+  saveOutcomes();
+  renderBoard();
+  showToast(o.signalStatus === 'emergency' ? '🚨 Marked as Emergency' : '✅ Emergency cleared');
+}
+
+function toggleDropdown(id, e) {
+  e.stopPropagation();
+  const dd = document.getElementById(`dropdown-${id}`);
+  if (!dd) return;
+  const isOpen = dd.classList.contains('open');
+  closeAllDropdowns();
+  if (!isOpen) {
+    dd.classList.add('open');
+    activeDropdownId = id;
+  }
+}
+
+function closeAllDropdowns() {
+  document.querySelectorAll('.stage-dropdown.open').forEach(d => d.classList.remove('open'));
+  activeDropdownId = null;
+}
+
+function showDetails(id) {
+  const o = outcomes.find(x => x.id === id);
+  if (!o) return;
+  detailsOutcomeId = id;
+  const cfg = STAGE_CONFIG[o.stage] || {};
+  const content = document.getElementById('details-content');
+  content.innerHTML = `
+    <div style="margin-bottom:16px;">
+      <span class="stage-badge" style="background:${cfg.color}22;color:${cfg.color};border:1px solid ${cfg.color}44;display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:99px;font-size:12px;font-weight:600;">
+        ${cfg.emoji} ${cfg.label}
+      </span>
+      ${o.signalStatus === 'emergency' ? '<span class="stage-badge" style="background:rgba(239,68,68,0.15);color:#fca5a5;border:1px solid rgba(239,68,68,0.3);display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:99px;font-size:12px;font-weight:600;margin-left:6px;">🚨 EMERGENCY</span>' : ''}
+    </div>
+    <div style="font-size:16px;font-weight:700;margin-bottom:8px;line-height:1.4;">${escHtml(o.title)}</div>
+    <div style="font-size:13px;color:#64748b;margin-bottom:20px;">${escHtml(o.targetMetric || '—')}</div>
+
+    <div class="details-section">
+      <div class="details-row"><span class="details-key">Impact Score</span><span class="details-val">${'★'.repeat(o.impactScore||0)}${'☆'.repeat(5-(o.impactScore||0))}</span></div>
+      <div class="details-row"><span class="details-key">Assigned To</span><span class="details-val">${escHtml(o.assignedTo||'—')}</span></div>
+      <div class="details-row"><span class="details-key">Time in Stage</span><span class="details-val">${timeInStage(o.stageChangedAt)}</span></div>
+      <div class="details-row"><span class="details-key">Pivot Window</span><span class="details-val">${o.pivotWindowDays || '—'} days</span></div>
+      <div class="details-row"><span class="details-key">Created</span><span class="details-val">${o.createdAt || '—'}</span></div>
+      <div class="details-row"><span class="details-key">Stage Changed</span><span class="details-val">${o.stageChangedAt || '—'}</span></div>
+      <div class="details-row"><span class="details-key">Signal Status</span><span class="details-val" style="color:${o.signalStatus==='emergency'?'#f87171':'#34d399'}">${o.signalStatus === 'emergency' ? '🚨 Emergency' : '✅ On Track'}</span></div>
+    </div>
+
+    <div style="margin-top:20px;">
+      <div style="font-size:12px;font-weight:600;color:#64748b;margin-bottom:10px;letter-spacing:.5px;text-transform:uppercase;">Pipeline Progress</div>
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+        ${PIPELINE_STAGES.map((s,i) => {
+          const sidx = PIPELINE_STAGES.indexOf(o.stage === 'PIVOT' ? 'BUILD' : o.stage);
+          const sc = STAGE_CONFIG[s];
+          const isCurrent = i === sidx;
+          const isDone = i < sidx;
+          return `<div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+            <div style="width:28px;height:28px;border-radius:50%;background:${isCurrent?sc.color:isDone?'rgba(255,255,255,0.2)':'rgba(255,255,255,0.06)'};border:${isCurrent?'2px solid '+sc.color:'1px solid rgba(255,255,255,0.1)'};display:flex;align-items:center;justify-content:center;font-size:12px;${isCurrent?'box-shadow:0 0 12px '+sc.color+';':''}">${sc.emoji}</div>
+            <span style="font-size:9px;color:${isCurrent?sc.color:'#64748b'};font-weight:${isCurrent?600:400};">${s}</span>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+
+    <div style="margin-top:28px;display:flex;flex-direction:column;gap:8px;">
+      <button class="btn btn-danger" style="width:100%;justify-content:center;padding:10px;" onclick="if(confirm('Delete this outcome?')){deleteOutcome('${o.id}')}">🗑 Delete Outcome</button>
+    </div>
+  `;
+  document.getElementById('details-panel').classList.add('open');
+}
+
+function deleteOutcome(id) {
+  outcomes = outcomes.filter(o => o.id !== id);
+  saveOutcomes();
+  document.getElementById('details-panel').classList.remove('open');
+  renderBoard();
+  showToast('Outcome deleted');
+}
+
+// ── FILTER ──
+document.getElementById('filter-bar').addEventListener('click', e => {
+  const pill = e.target.closest('.filter-pill');
+  if (!pill) return;
+  currentFilter = pill.dataset.filter;
+  document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+  pill.classList.add('active');
+  renderBoard();
+});
+
+// ── DELIVERED TOGGLE ──
+document.getElementById('delivered-toggle').addEventListener('click', () => {
+  const toggle = document.getElementById('delivered-toggle');
+  const cards = document.getElementById('delivered-cards');
+  toggle.classList.toggle('open');
+  cards.classList.toggle('open');
+});
+
+// ── MODAL ──
+const modalBackdrop = document.getElementById('modal-backdrop');
+
+document.getElementById('fab-btn').addEventListener('click', () => {
+  resetForm();
+  modalBackdrop.classList.add('open');
+});
+
+function closeModal() { modalBackdrop.classList.remove('open'); }
+
+document.getElementById('modal-close').addEventListener('click', closeModal);
+document.getElementById('modal-cancel').addEventListener('click', closeModal);
+modalBackdrop.addEventListener('click', e => { if (e.target === modalBackdrop) closeModal(); });
+
+// Star selector
+let modalImpact = 3;
+function setModalImpact(v) {
+  modalImpact = v;
+  document.querySelectorAll('#star-selector .star-btn').forEach((b,i) => {
+    b.classList.toggle('active', i < v);
+  });
+}
+
+document.getElementById('star-selector').addEventListener('click', e => {
+  const btn = e.target.closest('.star-btn');
+  if (btn) setModalImpact(parseInt(btn.dataset.val));
+});
+
+function resetForm() {
+  document.getElementById('form-title').value = '';
+  document.getElementById('form-metric').value = '';
+  document.getElementById('form-assignee').value = '';
+  document.getElementById('form-pivot').value = '';
+  document.getElementById('form-stage').value = 'IDEATE';
+  setModalImpact(3);
+}
+
+document.getElementById('modal-create').addEventListener('click', () => {
+  const title = document.getElementById('form-title').value.trim();
+  if (!title) {
+    document.getElementById('form-title').style.borderColor = '#ef4444';
+    setTimeout(() => document.getElementById('form-title').style.borderColor = '', 2000);
+    return;
+  }
+  const today = new Date().toISOString().slice(0,10);
+  const newOutcome = {
+    id: Date.now().toString(),
+    title,
+    targetMetric: document.getElementById('form-metric').value.trim(),
+    impactScore: modalImpact,
+    stage: document.getElementById('form-stage').value,
+    assignedTo: document.getElementById('form-assignee').value.trim() || 'Unassigned',
+    signalStatus: 'ok',
+    pivotWindowDays: parseInt(document.getElementById('form-pivot').value) || 14,
+    createdAt: today,
+    stageChangedAt: today,
+  };
+  outcomes.unshift(newOutcome);
+  saveOutcomes();
+  closeModal();
+  renderBoard();
+  showToast('✅ Outcome created!');
+});
+
+// ── DETAILS PANEL ──
+document.getElementById('details-close-btn').addEventListener('click', () => {
+  document.getElementById('details-panel').classList.remove('open');
+});
+
+// ── GLOBAL CLICK ──
+document.addEventListener('click', e => {
+  if (!e.target.closest('.stage-dropdown') && !e.target.closest('.btn')) {
+    closeAllDropdowns();
+  }
+});
+
+// ── INIT ──
+loadOutcomes();
+renderBoard();
+
+// Auto-refresh time displays every 60 seconds
+setInterval(() => {
+  document.querySelectorAll('[id^="card-"]').forEach(card => {
+    const id = card.dataset.id;
+    const o = outcomes.find(x => x.id === id);
+    if (o) {
+      const timeEl = card.querySelector('.time-in-stage');
+      if (timeEl) timeEl.textContent = '⏱ ' + timeInStage(o.stageChangedAt);
+    }
+  });
+}, 60000);
+</script>
+</body>
+</html>
